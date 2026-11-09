@@ -213,6 +213,20 @@ h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
 :root[data-theme="dark"] .sync button{color:#10132a}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sync button{color:#10132a}}
 .sync button[disabled]{opacity:.5}
+
+.sline{display:flex;flex-wrap:wrap;gap:8px;min-height:58px;border-bottom:3px solid var(--line);padding:8px 0;margin:12px 0;align-items:center}
+.sline.ok{border-color:var(--good)}
+.sline.no{border-color:var(--bad);animation:shake .35s}
+.wd{padding:9px 13px;border:2px solid var(--line);background:var(--paper);border-radius:12px;font:600 18px var(--body)}
+button.wd:hover{border-color:var(--ac)}
+.wd.on{background:color-mix(in srgb,var(--ac) 14%,var(--card));border-color:var(--ac)}
+.wd[disabled]{opacity:.25;cursor:default}
+.swin{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:500 18px var(--body);margin:10px 0}
+.swin:focus{outline:3px solid var(--ac);outline-offset:1px}
+.fhint{color:var(--muted);font-size:15px}
+.fhint b{color:var(--ink)}
+.chk{list-style:none;padding:0;margin:12px 0;display:grid;gap:4px;font-weight:600}
+.chk li.ok{color:var(--good)}.chk li.no{color:var(--bad)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -336,11 +350,39 @@ const U=[
  say:["The party was awesome!","I was nervous before the test.","The food wasn't great, but the music was brilliant."]}
 ];
 U.forEach(u=>{u.items=u.groups.flatMap(g=>g.items.map(a=>({en:a[0],ipa:a[1],vi:a[2],sy:a[3]||"",g:g.g})))});
+
+/* ---------- Đặt câu: [từ/cụm, câu hỏi gợi ý, khung câu, câu mẫu, regex kiểm tra từ] ---------- */
+const SENT={
+1:[["go cycling","Bạn đi xe đạp với ai, vào lúc nào?","I go cycling with ___ on ___.","I go cycling with my friends on Sunday.","cycl"],
+   ["play volleyball","Ai trong gia đình bạn chơi bóng chuyền?","My ___ plays volleyball at ___.","My brother plays volleyball at school.","volleyball"],
+   ["do gymnastics","Bạn tập thể dục dụng cụ khi nào?","I do gymnastics every ___.","I do gymnastics every Tuesday after school.","gymnastic"],
+   ["go surfing","Bạn muốn đi lướt sóng ở đâu?","I want to go surfing in ___.","I want to go surfing in Da Nang.","surf"],
+   ["racket","Bạn dùng cây vợt để chơi môn gì?","I use a racket to play ___.","I use a racket to play badminton.","racket"],
+   ["play table tennis","Bạn chơi bóng bàn ở đâu?","I play table tennis at ___.","I play table tennis at the sports club.","table\\s+tennis"]],
+2:[["wake up","Bạn thức dậy lúc mấy giờ?","I wake up at ___.","I wake up at six o'clock every morning.","wake\\s+up|woke\\s+up"],
+   ["have breakfast","Bạn ăn gì vào bữa sáng?","I have ___ for breakfast.","I have bread and fruit for breakfast.","breakfast"],
+   ["leave the house","Bạn ra khỏi nhà lúc mấy giờ?","I leave the house at ___.","I leave the house at seven and go to school.","leave"],
+   ["tidy your room","Bạn dọn phòng khi nào?","I tidy my room on ___.","I tidy my room on Saturday morning.","tidy"],
+   ["clean your teeth","Bạn đánh răng khi nào?","I clean my teeth after ___.","I clean my teeth after breakfast.","teeth"],
+   ["toast","Bạn thích ăn gì với bánh mì nướng?","I like toast with ___.","I like toast with honey.","toast"]],
+3:[["become a singer","Ước mơ của bạn là gì?","My dream is to become ___.","My dream is to become a singer.","become"],
+   ["play in a band","Bạn muốn chơi nhạc cụ gì trong ban nhạc?","I want to play the ___ in a band.","I want to play the guitar in a band.","band"],
+   ["pop","Bạn thích và không thích thể loại nhạc nào?","I love ___, but I don't like ___.","I love pop, but I don't like opera.","pop|rock|jazz|rap|hip-hop|classical|opera|soul"],
+   ["go on tour","Ca sĩ nổi tiếng thường làm gì?","Famous singers ___.","Famous singers go on tour and give concerts.","tour|concert"],
+   ["piano","Bạn muốn học nhạc cụ nào?","I want to learn the ___.","I want to learn the piano.","piano|violin|drums|keyboard|saxophone|guitar"],
+   ["record an album","Ban nhạc làm gì trong phòng thu?","In the studio, a band can ___.","In the studio, a band can record an album.","record"]],
+4:[["awesome","Bữa tiệc hôm qua thế nào?","The ___ was awesome!","The party was awesome!","awesome"],
+   ["nervous","Bạn cảm thấy thế nào trước bài kiểm tra?","I was nervous before ___.","I was nervous before the test.","nervous"],
+   ["brilliant","Hãy so sánh đồ ăn và âm nhạc ở bữa tiệc.","The food wasn't ___, but the music was ___.","The food wasn't great, but the music was brilliant.","wasn't|weren't|was not"],
+   ["surprised","Điều gì làm bạn ngạc nhiên?","I was surprised because ___.","I was surprised because the test was easy.","surprised"],
+   ["worried","Vì sao bạn lo lắng?","I was worried about ___.","I was worried about my exam.","worried"],
+   ["glad","Khi nào bạn thấy vui?","I was glad when ___.","I was glad when my friends came to the party.","glad|happy"]]
+};
 /* trang này chỉ giữ các unit trong SET */
 const SET=[3, 4];
 for(let i=U.length-1;i>=0;i--)if(!SET.includes(U[i].n))U.splice(i,1);
 
-const MODES=[["cards","Flashcard"],["match","Nối cặp"],["quiz","Trắc nghiệm"],["stress","Trọng âm"],["spell","Xếp chữ"],["speak","Nói lại"]];
+const MODES=[["cards","Flashcard"],["match","Nối cặp"],["quiz","Trắc nghiệm"],["stress","Trọng âm"],["spell","Xếp chữ"],["speak","Nói lại"],["sentence","Đặt câu"]];
 const GAMES=MODES.slice(1).map(m=>m[0]);
 const KEY="vocab-passport-a2-v2-"+SET.join("");
 const LESSON="Từ vựng A2 Unit 3-4";
@@ -412,6 +454,12 @@ function startGame(){
     });
     G={t:"spell",qs,i:0,score:0,ans:[],used:[],state:"",tries:0};
   }
+  if(S.mode==="sentence"){
+    const pool=shuffle((SENT[S.u]||[]).map(a=>({w:a[0],q:a[1],f:a[2],m:a[3],k:a[4]})));
+    const ord=pool.slice(0,3).map(x=>{const words=x.m.split(" ");return {type:"order",x,words,chips:shuffle(words.map((w,i)=>({w,i})))}});
+    const wr=pool.slice(3,6).concat(pool.slice(0,1)).slice(0,4).map(x=>({type:"write",x}));
+    G={t:"sentence",steps:ord.concat(wr),i:0,score:0,ans:[],state:"",tries:0,text:"",res:null,show:false,peeked:false,passed:false};
+  }
   if(S.mode==="speak"){
     G={t:"speak",q:shuffle(it).slice(0,10),i:0,show:false,again:[],known:0,retry:false};
   }
@@ -428,7 +476,7 @@ const starsFor=(s,t)=>s/t>=.9?3:s/t>=.7?2:1;
 function home(){
   const total=U.reduce((a,u)=>a+u.items.length,0);
   return `<div class="top"><div><h1>Vocab <span>Passport</span> A2</h1>
-  <p class="muted">Unit 3–4, sách Prepare 2e Level 2. Học flashcard trước, rồi làm đủ 5 trò trong mỗi unit để nhận dấu.</p></div>
+  <p class="muted">Unit 3–4, sách Prepare 2e Level 2. Học flashcard trước, rồi làm đủ 6 trò trong mỗi unit để nhận dấu.</p></div>
   <span class="tag">${total} từ và cụm từ</span></div>
   <div class="tiles">${U.map(u=>{
     const d=doneCount(u.n),on=d===GAMES.length;
@@ -479,6 +527,40 @@ function cardsView(){
 }
 function flSay(){const c=FD.deck[FD.i];if(c)say(c.en)}
 function flAdv(){FD.flip=false;if(FD.i<FD.deck.length-1)FD.i++;else{FD.i=0;if(FD.only)fbuild(false)}}
+
+function checkSent(txt,x){
+  const t=txt.trim(),words=t.split(/\s+/).filter(Boolean);
+  let kk=false;try{kk=new RegExp(x.k,"i").test(t)}catch(e){}
+  return [{ok:kk,label:"Dùng từ/cụm “"+x.w+"”"},{ok:/^[A-Z]/.test(t),label:"Chữ cái đầu viết hoa"},{ok:/[.!?]$/.test(t),label:"Có dấu chấm câu ở cuối"},{ok:words.length>=5,label:"Ít nhất 5 từ (em viết "+words.length+" từ)"}];
+}
+function sentenceView(){
+  if(G.end)return resultView();
+  const st=G.steps[G.i],x=st.x,n=G.steps.length;
+  const head=`${prog(G.i,n)}<div class="qtype">Câu ${G.i+1}/${n} · ${st.type==="order"?"Xếp các từ thành câu đúng":"Tự đặt câu của em"}</div>`;
+  if(st.type==="order"){
+    const built=G.ans.map(k=>st.chips[k].w);
+    return head+`<div class="q" style="font-size:22px">${esc(x.q)}</div><div class="muted">Bấm các từ theo đúng thứ tự để trả lời.</div>
+    <div class="sline ${G.state}">${built.map(w=>`<span class="wd on">${esc(w)}</span>`).join("")||'<span class="muted">Câu của em hiện ở đây</span>'}</div>
+    <div class="row">${st.chips.map((c,k)=>`<button class="wd" data-act="so-chip" data-k="${k}" ${G.ans.includes(k)||G.state==="ok"?"disabled":""}>${esc(c.w)}</button>`).join("")}</div>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" data-act="so-del" ${G.ans.length&&G.state!=="ok"?"":"disabled"}>Xoá từ cuối</button>${G.state==="ok"?`<button class="btn" data-act="sw-next">${G.i+1<n?"Câu tiếp":"Xem kết quả"}</button>`:""}</div>
+    ${G.state==="ok"?`<div class="fb ok">Đúng rồi! Đọc to cả câu: ${esc(x.m)} ${spk(x.m)}</div>`:G.state==="no"?`<div class="fb no">Chưa đúng thứ tự. Bấm “Xoá từ cuối” rồi thử lại.</div>`:""}`;
+  }
+  const chk=G.res?`<ul class="chk">${G.res.map(r=>`<li class="${r.ok?"ok":"no"}">${r.ok?"✓":"✗"} ${esc(r.label)}</li>`).join("")}</ul>`:"";
+  return head+`<div class="q" style="font-size:22px">${esc(x.q)}</div>
+  <div class="fhint">Khung gợi ý: <b>${esc(x.f)}</b></div>
+  <input id="sw-in" class="swin" value="${esc(G.text)}" placeholder="Viết câu tiếng Anh của em…" autocomplete="off" autocapitalize="sentences" spellcheck="false" ${G.show?"disabled":""}>
+  ${G.show?"":`<div class="row"><button class="btn" data-act="sw-check">Kiểm tra</button><button class="btn ghost" data-act="sw-peek">Xem câu mẫu</button></div>`}
+  ${chk}
+  ${G.passed?`<div class="fb ok">Câu của em đạt rồi. Tốt lắm!</div>`:""}
+  ${G.show?`<div class="ans"><div>Câu mẫu: <b>${esc(x.m)}</b> ${spk(x.m)}</div><div class="muted" style="margin-top:4px">Đọc to câu của em, rồi đọc câu mẫu.</div></div>
+  <button class="btn" data-act="sw-next">${G.i+1<n?"Câu tiếp":"Xem kết quả"}</button>`:""}`;
+}
+function sentLog(pass,peek){
+  const st=G.steps[G.i],x=st.x;
+  store._sent=(store._sent||[]);
+  store._sent.push({u:S.u,w:x.w,q:x.q,text:G.text.trim(),model:x.m,pass:!!pass,peek:!!peek,at:new Date().toISOString()});
+  store._sent=store._sent.slice(-40);save();
+}
 function resultView(){
   const e=G.end;
   return `<div class="result"><div class="big">${e.score}/${e.total}</div>
@@ -540,7 +622,7 @@ function speakView(){
 }
 
 function unitView(){
-  const body={cards:cardsView,match:matchView,quiz:quizView,stress:stressView,spell:spellView,speak:speakView}[S.mode]();
+  const body={cards:cardsView,match:matchView,quiz:quizView,stress:stressView,spell:spellView,speak:speakView,sentence:sentenceView}[S.mode]();
   const emptyStress=S.mode==="stress"&&G&&!G.qs.length;
   return unitHead()+`<div class="panel">${emptyStress?"<p>Unit này chưa có từ để luyện trọng âm.</p>":body}</div>`;
 }
@@ -612,6 +694,28 @@ document.addEventListener("click",e=>{
     if(G.i+1<G.qs.length){G.i++;G.ans=[];G.used=[];G.state="";G.tries=0}else{finish(starsFor(G.score,G.qs.length),G.score,G.qs.length,"Đúng ngay lần đầu "+G.score+"/"+G.qs.length+" từ. Thử lại để xếp đúng hết không cần sửa.")}
     return render();
   }
+  if(a==="so-chip"&&G&&G.t==="sentence"){
+    const st=G.steps[G.i],k=+b.dataset.k;if(G.ans.includes(k)||G.state==="ok")return;
+    G.state="";G.ans.push(k);
+    if(G.ans.length===st.words.length){
+      if(G.ans.map(j=>st.chips[j].w).join(" ")===st.x.m){G.state="ok";if(G.tries===0)G.score++;say(st.x.m)}else{G.state="no";G.tries++}
+    }
+    return render();
+  }
+  if(a==="so-del"&&G&&G.t==="sentence"){G.ans.pop();G.state="";return render()}
+  if(a==="sw-check"&&G&&G.t==="sentence"){
+    const inp=document.getElementById("sw-in");if(inp)G.text=inp.value;
+    const st=G.steps[G.i];G.res=checkSent(G.text,st.x);G.tries++;
+    if(G.res.every(r=>r.ok)){G.passed=true;G.show=true;G.score++;sentLog(true,false);say(G.text)}
+    else if(G.tries>=3){G.show=true;sentLog(false,false)}
+    return render();
+  }
+  if(a==="sw-peek"&&G&&G.t==="sentence"){const inp=document.getElementById("sw-in");if(inp)G.text=inp.value;G.show=true;G.peeked=true;sentLog(false,true);say(G.steps[G.i].x.m);return render()}
+  if(a==="sw-next"&&G&&G.t==="sentence"){
+    if(G.i+1<G.steps.length){G.i++;G.ans=[];G.state="";G.tries=0;G.text="";G.res=null;G.show=false;G.peeked=false;G.passed=false}
+    else{finish(starsFor(G.score,G.steps.length),G.score,G.steps.length,G.score>=6?"Em đặt câu rất tốt. Cô sẽ đọc các câu em tự viết.":"Em thử lại và dùng các khung gợi ý để đặt câu dài hơn nhé.")}
+    return render();
+  }
   if(a==="reveal"){G.show=true;say(G.q[G.i].en);return render()}
   if(a==="know"||a==="again1"){
     if(a==="know"){if(!G.retry)G.known++}else if(!G.retry)G.again.push(G.q[G.i]);
@@ -625,7 +729,7 @@ document.addEventListener("click",e=>{
 });
 
 /* ---------- Nộp kết quả về cho cô qua cổng nhận bài (Apps Script -> Sheet) ---------- */
-const MODE_VI={match:"Nối cặp",quiz:"Trắc nghiệm",stress:"Trọng âm",spell:"Xếp chữ",speak:"Nói lại"};
+const MODE_VI={match:"Nối cặp",quiz:"Trắc nghiệm",stress:"Trọng âm",spell:"Xếp chữ",speak:"Nói lại",sentence:"Đặt câu"};
 const SYNC={st:"ready",busy:false,dirty:false,pending:false,at:null};
 try{SYNC.name=localStorage.getItem("vp-student-name")||""}catch(e){SYNC.name=""}
 const hhmm=d=>d.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});
@@ -650,9 +754,10 @@ function buildGate(){
   const doneG=U.reduce((a,u)=>a+doneCount(u.n),0),totalG=U.length*GAMES.length;
   const stamps=U.filter(u=>doneCount(u.n)===GAMES.length).map(u=>"Unit "+u.n);
   const details=(store._log||[]).slice(-40).map(x=>({part:"Unit "+x.u+" · "+(MODE_VI[x.m]||x.m),question:"Lượt chơi lúc "+new Date(x.at).toLocaleString("vi-VN"),answer:x.score+"/"+x.total,correct:"",result:starTxt(x.stars)}));
+  (store._sent||[]).slice(-30).forEach(s=>details.push({part:"Unit "+s.u+" · Đặt câu ("+s.w+")",question:s.q,answer:s.text||"(chưa viết)",correct:s.model,result:s.pass?"Đạt":s.peek?"Đã xem câu mẫu":"Chưa đạt"}));
   hard.slice(0,30).forEach(w=>details.push({part:"Từ cần ôn (bấm “Ôn lại”)",question:w,answer:"",correct:"",result:"chưa nhớ"}));
   return {type:"submit",name:SYNC.name,lesson:LESSON,
-    summary:{vocab:parts[0].line,gram:parts[1]?parts[1].line:"",ctx:"",rec:"Số lượt chơi đã lưu: "+(store._log||[]).length,
+    summary:{vocab:parts[0].line,gram:parts[1]?parts[1].line:"",ctx:"Đặt câu: "+(store._sent||[]).filter(s=>s.pass).length+" câu đạt / "+(store._sent||[]).length+" câu đã làm",rec:"Số lượt chơi đã lưu: "+(store._log||[]).length,
       para:`Trò đã xong ${doneG}/${totalG}`+(stamps.length?" · tem: "+stamps.join(", "):""),
       feedback:hard.length?"Cần ôn lại: "+hard.slice(0,15).join(", "):"Chưa có từ nào đánh dấu cần ôn."},
     details};
@@ -690,6 +795,8 @@ function autoSend(){setTimeout(send,0)}
   render();
 })();
 syncUI();
+document.addEventListener("input",e=>{if(e.target&&e.target.id==="sw-in"&&G)G.text=e.target.value});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="sw-in"){e.preventDefault();const b=document.querySelector('[data-act=sw-check]');if(b)b.click()}});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="fl-only"){FD.only=e.target.checked;fbuild(false);render()}});
 document.addEventListener("keydown",e=>{
   if(S.view!=="unit"||S.mode!=="cards"||!FD.deck.length||/INPUT/.test(e.target.tagName))return;
