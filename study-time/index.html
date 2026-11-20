@@ -187,6 +187,7 @@ audio{width:100%;margin:8px 0}
 .sumlist{list-style:none;padding:0;margin:10px auto 14px;display:grid;gap:4px;max-width:360px;text-align:left}
 .sumlist li{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:4px 0}
 .sumlist .ok{color:var(--good);font-weight:700;margin-left:auto}.sumlist .no{color:var(--bad);font-weight:700;margin-left:auto}
+.tyin{flex:1;min-width:0;font:700 22px var(--body);padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink)}
 .wl{margin-top:18px;border-top:2px dashed var(--line);padding-top:10px}
 .wl summary{cursor:pointer;font-weight:700}
 .wrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
@@ -373,35 +374,50 @@ function clozeOf(w){
   const re=new RegExp(w.en.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/'/g,"['’]"),"i");
   return re.test(w.ex)?w.ex.replace(re,"_____"):null;
 }
-function typeFor(w,re){
-  if(re)return "en2vi";
+const norm=s=>String(s).toLowerCase().replace(/[’`]/g,"'").replace(/[^a-z' -]/g,"").replace(/\s+/g," ").trim();
+const TYPES=["en2vi","vi2en","hear2vi","hear2en","type","cloze"];
+const TL={en2vi:"Chọn nghĩa tiếng Việt",vi2en:"Chọn từ tiếng Anh",hear2vi:"Nghe và chọn nghĩa tiếng Việt",hear2en:"Nghe và chọn từ tiếng Anh",type:"Nghe và gõ lại từ em nghe được",cloze:"Điền từ vào chỗ trống"};
+function pickType(w,last){
   const m=mOf(w.en);
-  if(m===0)return "en2vi";
-  if(m===1)return (W.indexOf(w)%2)?"listen":"vi2en";
-  return clozeOf(w)?"cloze":"vi2en";
+  let ok=m===0?["en2vi","hear2vi","hear2en","vi2en"]:TYPES.slice();
+  if(!clozeOf(w))ok=ok.filter(t=>t!=="cloze");
+  if(!canSpeak()){ok=ok.filter(t=>!/hear|type/.test(t));if(!ok.length)ok=["en2vi","vi2en"]}
+  if(ok.length>1)ok=ok.filter(t=>t!==last[w.en]);
+  return ok[Math.floor(Math.random()*ok.length)];
 }
 function makeQ(w,type){
+  if(type==="type")return {w,type};
   let pool=W.filter(x=>x.en!==w.en);
   if(type==="cloze")pool=pool.filter(x=>x.en!==ANTI[w.en]);
-  const f=type==="en2vi"?"vi":"en";
+  const f=(type==="en2vi"||type==="hear2vi")?"vi":"en";
   const opts=shuffle([w,...shuffle(pool).slice(0,3)]).map(x=>x[f]);
   return {w,type,opts,a:opts.indexOf(w[f]),stem:type==="cloze"?clozeOf(w):null};
 }
-function startRound(){
-  const f=store.f,unseen=W.filter(w=>!f.seen[w.en]),learning=W.filter(w=>f.seen[w.en]&&mOf(w.en)<MAXM);
-  const n=(S.F&&S.F.n||0)+1;
-  if(!unseen.length&&!learning.length){S.F={phase:"done",n};return}
-  if(unseen.length&&learning.length<6){S.F={phase:"learn",n,batch:unseen.slice(0,2),i:0};return}
-  beginQuiz(n,[],learning);
+function newFlow(){S.F={phase:"flow",step:0,sinceTeach:9,lastEn:"",lastType:{},pend:[],cur:null,pick:-1,typed:"",answered:false,right:false};nextItem(true)}
+function nextItem(first){
+  const F=S.F,f=store.f;
+  const unseen=W.filter(w=>!f.seen[w.en]),learning=W.filter(w=>f.seen[w.en]&&mOf(w.en)<MAXM);
+  F.pick=-1;F.typed="";F.answered=false;F.right=false;
+  if(!unseen.length&&!learning.length){F.phase="done";F.cur=null;return}
+  F.step++;F.sinceTeach++;
+  const teach=unseen.length&&(learning.length<2||(learning.length<4&&F.sinceTeach>=3&&Math.random()<.5));
+  if(teach){F.sinceTeach=0;F.cur={kind:"teach",w:unseen[0]};return}
+  let cand=learning.filter(w=>w.en!==F.lastEn);if(!cand.length)cand=learning;
+  const due=F.pend.filter(x=>x.at<=F.step).map(x=>x.en),dueW=cand.filter(w=>due.includes(w.en));
+  let w;
+  if(dueW.length)w=dueW[0];
+  else{const bag=[];cand.forEach(x=>{const n=MAXM+1-mOf(x.en);for(let k=0;k<n;k++)bag.push(x)});w=bag[Math.floor(Math.random()*bag.length)]}
+  F.pend=F.pend.filter(x=>x.en!==w.en);
+  F.cur={kind:"q",q:makeQ(w,pickType(w,F.lastType))};
+  F.lastEn=w.en;F.lastType[w.en]=F.cur.q.type;
 }
-function beginQuiz(n,batch,learning){
-  const review=learning.filter(w=>!batch.includes(w)).sort((a,b)=>mOf(a.en)-mOf(b.en)).slice(0,4);
-  const words=shuffle(batch.concat(review));
-  const before={};W.forEach(w=>before[w.en]=mOf(w.en));
-  S.F={phase:"quiz",n,batch,queue:words.map(w=>({w,re:0})),qi:0,pick:-1,teach:false,before,newly:[],asked:0};
-  S.F.q=makeQ(words[0],typeFor(words[0],0));
+function afterRender(){
+  const F=S.F;if(!F||S.tab!==1||F.phase!=="flow"||!F.cur)return;
+  if(F.cur.kind==="teach"){say(F.cur.w.en);return}
+  const q=F.cur.q;
+  if(/hear|type/.test(q.type)&&!F.answered)say(q.w.en);
+  if(q.type==="type"&&!F.answered){const el=document.querySelector('[data-in="ty"]');if(el)el.focus()}
 }
-function qAudio(){const F=S.F;if(F&&F.phase==="quiz"&&F.q&&(F.q.type==="en2vi"||F.q.type==="listen"))say(F.q.w.en)}
 function wordCard(w,extra){
   return `<div class="lcard"><div class="en">${esc(w.en)} ${spk(w.en)}</div><div class="fipa">${esc(w.ipa)}</div><div class="vi">${esc(w.vi)}</div>
   <div class="ex">${esc(w.ex)}</div><div class="exvi">${esc(w.exvi)}</div>${extra||""}</div>`;
@@ -417,68 +433,52 @@ function listBox(){
   return `<details class="wl" ${S.listOpen?"open":""}><summary>Xem danh sách 22 từ</summary>${W.map(w=>`<div class="wrow"><div><b>${esc(w.en)}</b> <span class="ipa muted">${esc(w.ipa)}</span><br><span class="muted">${esc(w.vi)}</span></div><div class="row"><span class="pips">${pips(w.en)}</span>${spk(w.en)}</div></div>`).join("")}</details>`;
 }
 function view1(){
-  if(!S.F)startRound();
+  if(!S.F)newFlow();
   const F=S.F;let body="";
-  const lead=`<p class="lead">Học theo từng đợt: 2 từ mới, rồi kiểm tra ngay. Từ nào chưa chắc sẽ quay lại ở các vòng sau. Mỗi từ cần trả lời đúng ${MAXM} lần mới được tính là đạt.</p>`;
-  if(F.phase==="learn"){
-    const w=F.batch[F.i],last=F.i===F.batch.length-1;
-    body=`<div class="qtype">Vòng ${F.n} · Học từ mới ${F.i+1}/${F.batch.length}</div>${wordCard(w)}
-    <div class="row" style="margin-top:14px"><button class="btn ghost" data-act="l-hear">Nghe lại</button><button class="btn" data-act="l-next">${last?"Làm kiểm tra ngay":"Từ tiếp →"}</button></div>
-    <p class="muted" style="margin:10px 0 0;font-size:14px">Đọc to từ và câu ví dụ, rồi bấm tiếp.</p>`;
-  }else if(F.phase==="quiz"){
-    const q=F.q,w=q.w,it=F.queue[F.qi],ans=F.pick>=0,right=ans&&F.pick===q.a;
-    const L={en2vi:"Chọn nghĩa tiếng Việt",vi2en:"Chọn từ tiếng Anh",listen:"Nghe và chọn từ đúng",cloze:"Điền từ vào chỗ trống"}[q.type];
-    const stem=q.type==="en2vi"?`<span class="en" style="font-size:34px">${esc(w.en)}</span> ${spk(w.en)}`:q.type==="vi2en"?`<span class="vi" style="font-size:28px">${esc(w.vi)}</span>`:q.type==="listen"?`<button class="btn" data-act="q-hear">Nghe từ</button>`:`<span class="ex" style="font-size:22px;font-style:normal">${esc(q.stem)}</span><div class="muted" style="font-size:14px;margin-top:4px">${esc(w.exvi)}</div>`;
-    body=`<div class="prog"><i style="width:${F.qi/F.queue.length*100}%"></i></div>
-    <div class="qtype">Vòng ${F.n} · Kiểm tra câu ${F.qi+1}/${F.queue.length}${it.re?" · hỏi lại":""} · ${L}</div>
-    <div class="qstem">${stem}</div>
-    <div class="opts">${q.opts.map((o,i)=>`<button class="opt ${ans?(i===q.a?"ok":i===F.pick?"no":""):""}" data-act="qa-pick" data-i="${i}" ${ans?"disabled":""}>${esc(o)}</button>`).join("")}</div>
-    ${ans?(right?`<div class="fb ok">Đúng rồi! ${it.re?"":"Từ này lên mức "+pips(w.en)+"."}</div>`:`<div class="fb no">Chưa đúng. Em xem lại từ này rồi cô sẽ hỏi lại sau.</div>${wordCard(w)}`):""}
-    ${ans?`<div class="row" style="margin-top:12px"><button class="btn" data-act="qa-next">${F.qi+1<F.queue.length?"Câu tiếp":"Xem kết quả vòng"}</button></div>`:""}`;
-  }else if(F.phase==="sum"){
-    const up=F.up||[],nw=F.newly||[];
-    const need=W.filter(w=>store.f.seen[w.en]&&mOf(w.en)<MAXM).length,left=W.filter(w=>!store.f.seen[w.en]).length;
-    body=`<div class="result"><h2>Xong vòng ${F.n}</h2>
-    <p>${nw.length?`Từ mới đạt: <b>${esc(nw.join(", "))}</b>.`:"Chưa có từ nào đạt trong vòng này."}</p>
-    <p class="muted">${up.length} từ tăng mức · ${need} từ đang học${left?` · còn ${left} từ chưa học`:""}</p>
-    <ul class="sumlist">${F.rows.map(r=>`<li><b>${esc(r.en)}</b> <span class="pips">${pips(r.en)}</span> ${r.miss?'<span class="no">sai '+r.miss+' lần</span>':'<span class="ok">đúng</span>'}</li>`).join("")}</ul>
-    <button class="btn" data-act="sum-go">${left?"Học 2 từ mới":"Ôn tiếp"}</button></div>`;
-  }else{
-    body=`<div class="result"><h2>Em đã đạt cả ${W.length} từ!</h2><p>Mỗi từ em đã trả lời đúng ${MAXM} lần. Sang Tiết 2 nhé, và nhớ bấm “Nộp bài” để cô thấy kết quả.</p>
+  if(F.phase==="done"){
+    body=`<div class="result"><h2>Em đã đạt cả ${W.length} từ!</h2><p>Mỗi từ em đã trả lời đúng ${MAXM} lần. Sang Tiết 2 nhé. Nhớ bấm “Nộp bài” để cô thấy kết quả.</p>
     <div class="row" style="justify-content:center"><button class="btn" data-act="tab" data-n="2">Sang Tiết 2</button></div></div>`;
-  }
-  return `<div class="panel" style="--ac:var(--p1)">${lead}${statusBar()}<div class="flow">${body}</div>${listBox()}</div>`;
-}
-function l1Next(){
-  const F=S.F;
-  if(F.i<F.batch.length-1){F.i++;render();say(F.batch[F.i].en);return}
-  F.batch.forEach(w=>{store.f.seen[w.en]=1});save();
-  const learning=W.filter(w=>store.f.seen[w.en]&&mOf(w.en)<MAXM);
-  beginQuiz(F.n,F.batch,learning);render();qAudio();
-}
-function qaPick(i){
-  const F=S.F,q=F.q,it=F.queue[F.qi],w=q.w;if(F.pick>=0)return;
-  F.pick=i;F.asked++;
-  if(i===q.a){
-    if(!it.re){const b=mOf(w.en);store.f.m[w.en]=b+1;if(b+1>=MAXM)F.newly.push(w.en)}
-    say(w.en);
+  }else if(F.cur.kind==="teach"){
+    body=`<div class="qtype">Từ mới</div>${wordCard(F.cur.w)}
+    <div class="row" style="margin-top:14px"><button class="btn ghost" data-act="f-hear">Nghe lại</button><button class="btn" data-act="f-next">Tiếp theo →</button></div>
+    <p class="muted" style="margin:10px 0 0;font-size:14px">Đọc to từ và câu ví dụ rồi bấm tiếp theo.</p>`;
   }else{
-    store.f.w[w.en]=(store.f.w[w.en]||0)+1;
-    if(!it.re)store.f.m[w.en]=Math.max(0,mOf(w.en)-1);
-    F.miss=F.miss||{};F.miss[w.en]=(F.miss[w.en]||0)+1;
-    if(it.re<2)F.queue.push({w,re:it.re+1});
+    const q=F.cur.q,w=q.w,ans=F.answered;
+    let stem="";
+    if(q.type==="en2vi")stem=`<span class="en" style="font-size:34px">${esc(w.en)}</span> ${spk(w.en)}`;
+    else if(q.type==="vi2en")stem=`<span class="vi" style="font-size:28px">${esc(w.vi)}</span>`;
+    else if(q.type==="cloze")stem=`<span class="ex" style="font-size:22px;font-style:normal">${esc(q.stem)}</span><div class="muted" style="font-size:14px;margin-top:4px">${esc(w.exvi)}</div>`;
+    else stem=`<button class="btn" data-act="f-hear">Nghe lại</button>`;
+    let ctl="";
+    if(q.type==="type"){
+      ctl=`<div class="row" style="gap:8px;margin-top:6px"><input class="tyin" data-in="ty" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Gõ từ em nghe được" value="${esc(F.typed)}" ${ans?"disabled":""}>${ans?"":`<button class="btn" data-act="f-type">Kiểm tra</button>`}</div>`;
+    }else ctl=`<div class="opts">${q.opts.map((o,i)=>`<button class="opt ${ans?(i===q.a?"ok":i===F.pick?"no":""):""}" data-act="f-pick" data-i="${i}" ${ans?"disabled":""}>${esc(o)}</button>`).join("")}</div>`;
+    const fb=ans?(F.right?`<div class="fb ok">Đúng rồi! <span class="pips">${pips(w.en)}</span></div>`:`<div class="fb no">Chưa đúng, từ này sẽ quay lại sau.</div>${wordCard(w)}`):"";
+    body=`<div class="qtype">${TL[q.type]}</div><div class="qstem">${stem}</div>${ctl}${fb}
+    ${ans?`<div class="row" style="margin-top:12px"><button class="btn" data-act="f-next">Tiếp theo →</button></div>`:""}`;
+  }
+  return `<div class="panel" style="--ac:var(--p1)">${statusBar()}<div class="flow">${body}</div>${listBox()}</div>`;
+}
+function fAnswer(ok){
+  const F=S.F,w=F.cur.q.w;F.answered=true;F.right=ok;
+  if(ok){store.f.m[w.en]=mOf(w.en)+1;say(w.en)}
+  else{
+    store.f.w[w.en]=(store.f.w[w.en]||0)+1;store.f.m[w.en]=Math.max(0,mOf(w.en)-1);
+    F.pend.push({en:w.en,at:F.step+2});
   }
   save();render();
 }
-function qaNext(){
-  const F=S.F;F.qi++;F.pick=-1;
-  if(F.qi>=F.queue.length){
-    const seenW=[...new Set(F.queue.map(x=>x.w.en))];
-    F.up=seenW.filter(en=>mOf(en)>F.before[en]);
-    F.rows=seenW.map(en=>({en,miss:(F.miss||{})[en]||0}));
-    F.phase="sum";render();if(mastered().length===W.length)send();return;
-  }
-  const it=F.queue[F.qi];F.q=makeQ(it.w,typeFor(it.w,it.re));render();qAudio();
+function fPick(i){const F=S.F;if(F.answered)return;F.pick=i;fAnswer(i===F.cur.q.a)}
+function fType(){
+  const F=S.F;if(F.answered)return;
+  const el=document.querySelector('[data-in="ty"]');const v=el?el.value:"";if(!norm(v))return;
+  F.typed=v;fAnswer(norm(v)===norm(F.cur.q.w.en));
+}
+function fNext(){
+  const F=S.F;
+  if(F.cur&&F.cur.kind==="teach"){store.f.seen[F.cur.w.en]=1;save()}
+  nextItem();render();afterRender();
+  if(S.F.phase==="done")send();
 }
 
 /* ===== Tiết 2 ===== */
@@ -628,12 +628,10 @@ document.addEventListener("click",e=>{
   if(a==="say"){say(b.dataset.t);return}
   if(a==="tab")return setTab(+b.dataset.n);
   /* Tiết 1 */
-  if(a==="l-hear"){say(S.F.batch[S.F.i].en);return}
-  if(a==="l-next")return l1Next();
-  if(a==="q-hear"){say(S.F.q.w.en);return}
-  if(a==="qa-pick")return qaPick(i);
-  if(a==="qa-next")return qaNext();
-  if(a==="sum-go"){startRound();render();if(S.F.phase==="learn")say(S.F.batch[0].en);else qAudio();return}
+  if(a==="f-hear"){const F=S.F;say(F.cur.kind==="teach"?F.cur.w.en:F.cur.q.w.en);return}
+  if(a==="f-next")return fNext();
+  if(a==="f-pick")return fPick(i);
+  if(a==="f-type")return fType();
   /* Tiết 2 */
   if(a==="sit"){S.sit=i;return render()}
   if(a==="togvi"){S.so[S.sit]=S.so[S.sit]||{};S.so[S.sit].vi=!S.so[S.sit].vi;return render()}
@@ -685,6 +683,7 @@ document.addEventListener("input",e=>{
 document.addEventListener("focusout",e=>{
   const t=e.target;if(t&&t.dataset&&(t.dataset.in==="l")){setTimeout(()=>{if(!document.activeElement||!document.activeElement.dataset||document.activeElement.dataset.in!=="l")render()},50)}
 });
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.dataset&&e.target.dataset.in==="ty"){e.preventDefault();fType()}else if(e.key==="Enter"&&S.tab===1&&S.F&&S.F.phase==="flow"&&(S.F.answered||(S.F.cur&&S.F.cur.kind==="teach"))&&!(e.target&&/INPUT|BUTTON|SUMMARY/.test(e.target.tagName))){fNext()}});
 document.addEventListener("toggle",e=>{if(e.target&&e.target.classList&&e.target.classList.contains("wl"))S.listOpen=e.target.open},true);
 
 (function init(){
