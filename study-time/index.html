@@ -161,6 +161,8 @@ textarea.txt{min-height:92px;resize:vertical}
 .rcard{border:2px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
 .rcard.done{border-color:var(--good)}
 .rcard h3{font-size:19px;margin-bottom:4px}
+.rtext{font-size:19px;line-height:1.55;margin:8px 0}
+.rtext mark{background:color-mix(in srgb,var(--ac) 22%,transparent);color:var(--ink);font-weight:700;border-radius:5px;padding:0 3px}
 .pool{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .pool span{border:2px solid var(--ac);color:var(--ac);border-radius:99px;padding:3px 11px;font-size:13.5px;font-weight:700}
 .pool span.used{background:var(--ac);color:var(--on)}
@@ -255,32 +257,24 @@ const SIT=[
  wa:["Nam wants a quiet place to study.","Nam wants to talk with his friends.","Nam wants to leave the library."],
  wb:["Ben wants to talk with his friends about homework.","Ben wants a quiet place to sleep.","Ben wants to study alone."],
  wc:["Both boys want to use the library and do well in class.","Both boys want to go home.","Both boys want to play games."],
- model:"Ben and his friends can use the group study room for their discussion, and Nam can stay at the quiet table, so each side gets what they need."},
-{title:"Classroom window",a:"Hoa",b:"Tuan",
- en:"Hoa feels cold in class, so she wants the window closed. Tuan feels hot, so he wants the window open. They sit next to each other.",
- vi:"Hoa thấy lạnh nên muốn đóng cửa sổ. Tuấn thấy nóng nên muốn mở cửa sổ. Hai bạn ngồi cạnh nhau.",
- wa:["Hoa wants the window closed because she is cold.","Hoa wants the window open because she is hot.","Hoa wants to change classes."],
- wb:["Tuan wants the window open because he is hot.","Tuan wants the window closed because he is cold.","Tuan wants to go home."],
- wc:["Both students want to feel comfortable in class.","Both students want a new window.","Both students want to stop learning."],
- model:"Hoa can move to a seat far from the window and we can open the window a little, so both students feel comfortable."},
-{title:"Class trip",a:"Minh",b:"Linh",
- en:"The class can only choose one place for a trip. Minh wants to visit the science museum. Linh wants to go to the park for a picnic.",
- vi:"Cả lớp chỉ được chọn một nơi để đi chơi. Minh muốn thăm bảo tàng khoa học. Linh muốn đến công viên để đi picnic.",
- wa:["Minh wants to visit the science museum.","Minh wants to have a picnic in the park.","Minh wants to stay at school."],
- wb:["Linh wants to go to the park for a picnic.","Linh wants to visit the science museum.","Linh wants to do extra homework."],
- wc:["Both students want a fun class trip.","Both students want no trip.","Both students want a longer lesson."],
- model:"We could visit the museum in the morning and have a picnic in the park nearby in the afternoon, so each side is happy."}
+ model:"Ben and his friends can use the group study room for their discussion, and Nam can stay at the quiet table, so each side gets what they need."}
 ];
 
 /* Tiết 3: 3 bản ghi */
+const REC_TITLE="Why do we need win-win solutions?";
 const REC=[
-{title:"Mâu thuẫn ở lớp",prompt:"Nói một câu về một tình huống mâu thuẫn ở trường và cách bình tĩnh lại.",pool:["situation","conflict","argue","calm down","understanding"],
- model:"In this situation, two classmates argue, so I ask them to calm down."},
-{title:"Ý kiến của em",prompt:"Nói một câu cho biết em đồng ý hay không đồng ý, và vì sao thấy công bằng hay không công bằng.",pool:["agree","disagree","it's fair","it's unfair","both","each side"],
- model:"I disagree because it's unfair when only one student cleans the classroom."},
-{title:"Làm việc nhóm",prompt:"Nói một câu đề xuất cách làm việc nhóm tốt hơn.",pool:["option","feasible","contribute","list out","explain","focus","this works for me","mention","discussion","distract"],
- model:"Let's list out our options, and then each student can contribute one idea."}
+{title:"Đoạn 1 · Xung đột ở lớp",
+ text:"Every day at school, we meet a new situation. Sometimes two students disagree and argue. This conflict can distract the whole class, and nobody can focus. So we need to calm down first.",
+ vi:"Mỗi ngày ở trường, chúng ta gặp một tình huống mới. Đôi khi hai bạn không đồng ý và tranh cãi. Xung đột này có thể làm cả lớp mất tập trung, và không ai có thể tập trung. Vì vậy, trước hết chúng ta cần bình tĩnh lại."},
+{title:"Đoạn 2 · Thảo luận",
+ text:"Next, each side has a chance to explain what they want. Both students should listen with understanding. In a good discussion, we mention our ideas and list out every option. Then we ask, is this feasible?",
+ vi:"Tiếp theo, mỗi bên có cơ hội giải thích điều mình muốn. Cả hai bạn nên lắng nghe với sự thấu hiểu. Trong một cuộc thảo luận tốt, chúng ta nêu ý kiến và liệt kê mọi phương án. Rồi hỏi: điều này có khả thi không?"},
+{title:"Đoạn 3 · Win-win solution",
+ text:"A win-win solution is an answer that both sides like. Everyone can contribute an idea. If we agree and say, this works for me, it's fair. If one person loses, it's unfair, and we may disagree again. That is why we learn win-win solutions.",
+ vi:"Giải pháp win-win là câu trả lời mà cả hai bên đều thích. Ai cũng có thể góp một ý tưởng. Nếu chúng ta đồng ý và nói: điều này ổn với mình, thì thật công bằng. Nếu một người thua thiệt thì không công bằng, và chúng ta có thể lại bất đồng. Đó là lý do chúng ta học giải pháp win-win."}
 ];
+const HLRX=new RegExp("(?<![A-Za-z])("+W.map(w=>w.en).sort((a,b)=>b.length-a.length).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")(?![A-Za-z])","gi");
+const hl=t=>esc(t).replace(HLRX,m=>`<mark>${m}</mark>`);
 
 /* ===== Tiện ích ===== */
 const $=s=>document.querySelector(s);
@@ -320,7 +314,7 @@ function buildGate(){
     if(b.s)details.push({part:"Tiết 2 · Tình huống "+(i+1)+" · Giải pháp win-win",question:s.title,answer:b.s,correct:s.model,result:b.p?"Đạt":"Chưa đạt"});
   });
   REC.forEach((r,i)=>{const c=store.rc[i];if(!c)return;
-    details.push({part:"Tiết 3 · Câu ghi âm "+(i+1),question:r.prompt,answer:c.text||"",correct:r.model,result:c.sent?"Đã gửi file ghi âm":"Chưa gửi ghi âm"});});
+    details.push({part:"Tiết 3 · Bài đọc · "+r.title,question:REC_TITLE,answer:"",correct:r.text,result:c.sent?"Đã gửi file ghi âm":"Chưa gửi ghi âm"});});
   return {type:"submit",name:store.name,lesson:LESSON,
     summary:{vocab:"Tiết 1: đạt "+mastered().length+"/"+W.length+" từ (đúng "+MAXM+" lần) · đã học "+W.filter(w=>store.f.seen[w.en]).length+" từ",
       gram:"Tiết 2: giải pháp win-win đạt "+bsDone()+"/"+SIT.length+" tình huống",ctx:"",
@@ -503,68 +497,55 @@ function view2(){
   };
     const listOk=b.l.filter(x=>x.trim().split(/\s+/).filter(Boolean).length>=3).length>=2;
   const chk=S.so[i].res?`<ul class="chk">${S.so[i].res.map(r=>`<li class="${r.ok?"ok":"no"}">${r.ok?"✓":"✗"} ${esc(r.label)}</li>`).join("")}</ul>`:"";
-  return `<div class="panel" style="--ac:var(--p2)"><p class="lead">Mỗi tình huống có hai bên muốn hai điều khác nhau. Em làm lần lượt 3 bước: xác định mỗi bên muốn gì, liệt kê các phương án, rồi viết giải pháp win-win.</p>
+  return `<div class="panel" style="--ac:var(--p2)"><p class="lead">Mỗi tình huống có hai bên muốn hai điều khác nhau. Cả 3 bước đều hiện sẵn bên dưới: (1) mỗi bên muốn gì, (2) liệt kê phương án, (3) viết giải pháp win-win.</p>
   <div class="sits" role="group" aria-label="Chọn tình huống">${tabs}</div>
   <div class="story"><h2>${i+1}. ${esc(s.title)}</h2><p>${esc(s.en)} ${spk(s.en)}</p>
-    ${S.so[i].vi?`<p class="muted">${esc(s.vi)}</p>`:""}<button class="link" data-act="togvi">${S.so[i].vi?"Ẩn tiếng Việt":"Xem tiếng Việt"}</button>
+    <p class="muted">${esc(s.vi)}</p>
     <div class="sides"><div class="side"><b>${esc(s.a)}</b>Bên A</div><div class="side"><b>${esc(s.b)}</b>Bên B</div></div></div>
 
   <div class="step ${b.w?"done":""}"><h3><span class="n">1</span>Mỗi bên muốn gì?</h3>
-    <p class="muted" style="margin:0">Chọn câu đúng cho từng phần, rồi bấm “Kiểm tra”. Em cần làm đúng bước này trước khi sang bước 2.</p>
+    <p class="muted" style="margin:0">Chọn câu đúng cho từng phần, rồi bấm “Kiểm tra”.</p>
     ${grp("a",A,esc(s.a)+" muốn gì?")}${grp("b",B,esc(s.b)+" muốn gì?")}${grp("c",C,"Cả hai bên cùng muốn điều gì?")}
-    ${b.w?`<div class="fb ok">Đúng rồi. Em đã hiểu mỗi bên muốn gì. Sang bước 2 nhé.</div>`:`<div class="row" style="margin-top:8px"><button class="btn" data-act="wantchk">Kiểm tra</button></div>${pk.msg?`<div class="fb no">${esc(pk.msg)}</div>`:""}`}</div>
+    ${b.w?`<div class="fb ok">Đúng rồi. Em đã hiểu mỗi bên muốn gì.</div>`:`<div class="row" style="margin-top:8px"><button class="btn" data-act="wantchk">Kiểm tra</button></div>${pk.msg?`<div class="fb no">${esc(pk.msg)}</div>`:""}`}</div>
 
-  <div class="step ${b.w?"":"locked"} ${listOk?"done":""}"><h3><span class="n">2</span>List out: liệt kê phương án</h3>
-    <p class="muted" style="margin:0">Viết ít nhất 2 phương án khác nhau (mỗi phương án từ 3 từ trở lên).${b.w?"":" Hoàn thành bước 1 để mở."}</p>
-    <div class="chips">${["One option is to","We could","What about"].map(c=>`<button class="chip" data-act="chip" data-t="${esc(c)}" ${b.w?"":"disabled"}>${esc(c)} …</button>`).join("")}</div>
-    ${[0,1,2].map(k=>`<input class="txt" data-in="l" data-k="${k}" placeholder="Phương án ${k+1}${k<2?"":" (không bắt buộc)"}" value="${esc(b.l[k])}" ${b.w?"":"disabled"} autocomplete="off" spellcheck="false">`).join("")}
+  <div class="step ${listOk?"done":""}"><h3><span class="n">2</span>List out: liệt kê phương án</h3>
+    <p class="muted" style="margin:0">Viết ít nhất 2 phương án khác nhau (mỗi phương án từ 3 từ trở lên).</p>
+    <div class="chips">${["One option is to","We could","What about"].map(c=>`<button class="chip" data-act="chip" data-t="${esc(c)}">${esc(c)} …</button>`).join("")}</div>
+    ${[0,1,2].map(k=>`<input class="txt" data-in="l" data-k="${k}" placeholder="Phương án ${k+1}${k<2?"":" (không bắt buộc)"}" value="${esc(b.l[k])}" autocomplete="off" spellcheck="false">`).join("")}
     ${listOk?`<div class="fb ok">Tốt! Em đã liệt kê được ${b.l.filter(x=>x.trim()).length} phương án.</div>`:""}</div>
 
-  <div class="step ${listOk?"":"locked"} ${b.p?"done":""}"><h3><span class="n">3</span>Win-win solution</h3>
-    <p class="muted" style="margin:0">Viết 1 câu giải pháp để cả hai bên đều hài lòng.${listOk?"":" Hoàn thành bước 2 để mở."}</p>
-    <div class="chips">${["Both of us can","Each side","This works for me because"].map(c=>`<button class="chip" data-act="chip" data-t="${esc(c)}" ${listOk?"":"disabled"}>${esc(c)} …</button>`).join("")}</div>
-    <textarea class="txt" data-in="s" placeholder="Viết giải pháp win-win của em…" ${listOk&&!b.p?"":"disabled"} autocapitalize="sentences" spellcheck="false">${esc(b.s)}</textarea>
-    ${b.p||b.show?"":`<div class="row"><button class="btn" data-act="solchk" ${listOk?"":"disabled"}>Kiểm tra</button></div>`}
+  <div class="step ${b.p?"done":""}"><h3><span class="n">3</span>Win-win solution</h3>
+    <p class="muted" style="margin:0">Viết 1 câu giải pháp để cả hai bên đều hài lòng.</p>
+    <div class="chips">${["Both of us can","Each side","This works for me because"].map(c=>`<button class="chip" data-act="chip" data-t="${esc(c)}">${esc(c)} …</button>`).join("")}</div>
+    <textarea class="txt" data-in="s" placeholder="Viết giải pháp win-win của em…" ${b.p?"disabled":""} autocapitalize="sentences" spellcheck="false">${esc(b.s)}</textarea>
+    ${b.p||b.show?"":`<div class="row"><button class="btn" data-act="solchk">Kiểm tra</button></div>`}
     ${chk}
     ${b.p?`<div class="fb ok">Giải pháp của em đạt rồi!</div>`:""}
     ${b.p||b.show?`<div class="model"><b>Câu mẫu:</b> ${esc(s.model)} ${spk(s.model)}<div class="muted" style="margin-top:4px">Đọc to câu của em, rồi đọc câu mẫu.</div></div>`:""}
-    ${(!b.p&&!b.show&&listOk&&b.t>=3)||(!b.p&&listOk&&!b.show)?`<div style="margin-top:8px"><button class="link" data-act="solpeek">Xem câu mẫu</button></div>`:""}</div></div>`;
+    ${!b.p&&!b.show?`<div style="margin-top:8px"><button class="link" data-act="solpeek">Xem câu mẫu</button></div>`:""}</div></div>`;
 }
 
 /* ===== Tiết 3 ===== */
-function rc(i){return store.rc[i]=store.rc[i]||{text:"",ok:0,sent:0,dur:0}}
-function chkRec(i,txt){
-  const r=REC[i],t=txt.trim().replace(/[’‘]/g,"'"),words=t.split(/\s+/).filter(Boolean);
-  const used=r.pool.filter(p=>new RegExp(byEn(p).rx,"i").test(t));
-  return {used,items:[
-    {ok:used.length>=2,label:"Dùng ít nhất 2 từ trong khung từ (em dùng "+used.length+")"},
-    {ok:words.length>=6,label:"Ít nhất 6 từ (em viết "+words.length+" từ)"},
-    {ok:/^[A-Z]/.test(t)&&/[.!?]$/.test(t),label:"Viết hoa chữ đầu và có dấu chấm cuối"}]};
-}
+function rc(i){return store.rc[i]=store.rc[i]||{sent:0,dur:0}}
 function view3(){
-  return `<div class="panel" style="--ac:var(--p3)"><p class="lead">Em viết 3 câu ngắn dùng từ vựng của bài (câu nói thường dùng ở trường), đọc to và ghi âm, rồi bấm “Gửi cho cô”. Mỗi câu có khung từ riêng, dùng ít nhất 2 từ.</p>
+  const vocabUsed=W.filter(w=>new RegExp("(?<![A-Za-z])"+w.en.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?![A-Za-z])","i").test(REC.map(r=>r.text).join(" "))).length;
+  return `<div class="panel" style="--ac:var(--p3)"><h2 style="margin:0 0 4px">${esc(REC_TITLE)}</h2>
+  <p class="lead">Bài đọc ngắn dùng ${vocabUsed} từ vựng của bài (từ in đậm màu). Em nghe cô đọc mẫu, đọc to từng đoạn, ghi âm rồi bấm “Gửi cho cô”.</p>
   ${store.name?"":`<div class="fb info" style="margin:0 0 12px">Gõ tên của em ở ô phía trên trước khi gửi bản ghi âm.</div>`}
   ${REC.map((r,i)=>recCard(i)).join("")}</div>`;
 }
 function recCard(i){
   const r=REC[i],c=rc(i),st=S.R[i]=S.R[i]||{state:"idle",url:null,blob:null,res:null,msg:"",sec:0};
-  const res=chkRec(i,c.text);
-  const pool=r.pool.map(p=>`<span class="${res.used.includes(p)?"used":""}">${esc(p)}</span>`).join("");
-  const passed=c.ok;
   let recUI="";
-  if(!passed){recUI=`<p class="muted" style="margin:6px 0 0">Viết xong và đạt đủ 3 điều kiện thì nút ghi âm sẽ mở.</p>`}
-  else{
-    if(st.state==="rec")recUI=`<button class="recbtn stop" data-act="recstop" data-i="${i}"><i></i> Dừng <span id="rt${i}">0:00</span></button>`;
-    else recUI=`<div class="row"><button class="recbtn" data-act="recstart" data-i="${i}"><i></i> ${st.url?"Ghi lại":"Bắt đầu ghi âm"}</button></div>`;
-    if(st.url&&st.state!=="rec")recUI+=`<audio controls src="${st.url}"></audio><div class="row"><button class="btn" data-act="recsend" data-i="${i}" ${st.state==="sending"||!store.name?"disabled":""}>${c.sent?"Gửi lại cho cô":"Gửi cho cô"}</button></div>`;
-    if(c.sent&&!st.url)recUI+=`<div class="fb ok">Đã gửi bản ghi âm này cho cô.</div>`;
-    if(st.msg)recUI+=`<div class="fb ${st.msg.startsWith("✓")?"ok":"no"}">${esc(st.msg)}</div>`;
-  }
-  return `<div class="rcard ${c.sent?"done":""}"><h3>Ghi âm ${i+1}: ${esc(r.title)} ${c.sent?"✓":""}</h3><p style="margin:0">${esc(r.prompt)}</p>
-    <div class="pool" aria-label="Khung từ">${pool}</div>
-    <div class="muted" style="font-size:14px">Câu mẫu: <i>${esc(r.model)}</i> ${spk(r.model)}</div>
-    <textarea class="txt" data-in="r" data-i="${i}" placeholder="Viết câu của em…" autocapitalize="sentences" spellcheck="false" ${st.state==="rec"?"disabled":""}>${esc(c.text)}</textarea>
-    ${c.text.trim()?`<ul class="chk">${res.items.map(x=>`<li class="${x.ok?"ok":"no"}">${x.ok?"✓":"✗"} ${esc(x.label)}</li>`).join("")}</ul>`:""}
+  if(st.state==="rec")recUI=`<button class="recbtn stop" data-act="recstop" data-i="${i}"><i></i> Dừng <span id="rt${i}">0:00</span></button>`;
+  else recUI=`<div class="row"><button class="recbtn" data-act="recstart" data-i="${i}"><i></i> ${st.url?"Ghi lại":"Bắt đầu ghi âm"}</button></div>`;
+  if(st.url&&st.state!=="rec")recUI+=`<audio controls src="${st.url}"></audio><div class="row"><button class="btn" data-act="recsend" data-i="${i}" ${st.state==="sending"||!store.name?"disabled":""}>${c.sent?"Gửi lại cho cô":"Gửi cho cô"}</button></div>`;
+  if(c.sent&&!st.url)recUI+=`<div class="fb ok">Đã gửi bản ghi âm này cho cô.</div>`;
+  if(st.msg)recUI+=`<div class="fb ${st.msg.startsWith("✓")?"ok":"no"}">${esc(st.msg)}</div>`;
+  return `<div class="rcard ${c.sent?"done":""}"><h3>${esc(r.title)} ${c.sent?"✓":""}</h3>
+    <p class="rtext">${hl(r.text)}</p>
+    <div class="row"><button class="btn ghost" data-act="say" data-t="${esc(r.text)}">Nghe cô đọc mẫu</button></div>
+    <p class="muted" style="margin:6px 0 10px;font-size:14px">${esc(r.vi)}</p>
     ${recUI}</div>`;
 }
 
@@ -604,7 +585,7 @@ async function recSend(i){
   try{
     const mime=st.blob.type||"audio/webm",ext=/mp4/.test(mime)?"m4a":/ogg/.test(mime)?"ogg":"webm";
     const audio=await b64(st.blob);
-    const ok=await post(JSON.stringify({type:"audio",name:store.name,lesson:LESSON,file:"StudyTime_"+(i+1)+"."+ext,label:"Ghi âm "+(i+1)+" · "+r.title,score:null,dur:st.sec,target:c.text,transcript:"",audio,mime}));
+    const ok=await post(JSON.stringify({type:"audio",name:store.name,lesson:LESSON,file:"StudyTime_"+(i+1)+"."+ext,label:"Bài đọc "+(i+1)+" · "+r.title,score:null,dur:st.sec,target:r.text,transcript:"",audio,mime}));
     st.state="idle";
     if(ok){c.sent=1;c.dur=st.sec;save();st.msg="✓ Đã gửi cho cô";send()}else st.msg="Chưa gửi được. Kiểm tra mạng rồi bấm gửi lại."
   }catch(e){st.state="idle";st.msg="Chưa gửi được. Kiểm tra mạng rồi bấm gửi lại."}
@@ -669,15 +650,7 @@ document.addEventListener("input",e=>{
   const t=e.target,k=t.dataset&&t.dataset.in;if(!k)return;
   if(k==="l"){bs(S.sit).l[+t.dataset.k]=t.value;save()}
   else if(k==="s"){bs(S.sit).s=t.value;save()}
-  else if(k==="r"){
-    const i=+t.dataset.i,c=rc(i);c.text=t.value;
-    const was=c.ok;c.ok=chkRec(i,c.text).items.every(x=>x.ok)?1:0;save();
-    /* cập nhật tại chỗ để không mất con trỏ: vẽ lại khi trạng thái mở khoá đổi */
-    if(was!==c.ok)render();else{const ul=t.parentElement.querySelector(".chk");const res=chkRec(i,c.text);
-      const html=res.items.map(x=>`<li class="${x.ok?"ok":"no"}">${x.ok?"✓":"✗"} ${esc(x.label)}</li>`).join("");
-      if(ul)ul.innerHTML=html;else{const n=document.createElement("ul");n.className="chk";n.innerHTML=html;t.after(n)}
-      t.parentElement.querySelectorAll(".pool span").forEach(sp=>sp.classList.toggle("used",res.used.includes(sp.textContent)))}
-  }
+
 });
 /* khi gõ ở bước 2, mở khoá bước 3 khi đủ 2 phương án (vẽ lại khi rời ô nhập) */
 document.addEventListener("focusout",e=>{
