@@ -162,6 +162,10 @@ textarea.txt{min-height:92px;resize:vertical}
 .rcard.done{border-color:var(--good)}
 .rcard h3{font-size:19px;margin-bottom:4px}
 .rtext{font-size:19px;line-height:1.55;margin:8px 0}
+.rtext.sm{font-size:16px}.wok{color:var(--good);font-weight:700}.wno{color:var(--bad);font-weight:700;text-decoration:underline wavy}
+.score{display:flex;gap:12px;align-items:center;margin:8px 0}
+.sc{font:800 34px var(--display);min-width:92px;text-align:center;border-radius:14px;padding:6px 8px;border:2px solid}.sc small{font-size:14px}
+.sc.g{color:var(--good);border-color:var(--good);background:var(--goodbg)}.sc.m{color:var(--p2);border-color:var(--p2)}.sc.b{color:var(--bad);border-color:var(--bad);background:var(--badbg)}
 .rtext mark{background:color-mix(in srgb,var(--ac) 22%,transparent);color:var(--ink);font-weight:700;border-radius:5px;padding:0 3px}
 .pool{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .pool span{border:2px solid var(--ac);color:var(--ac);border-radius:99px;padding:3px 11px;font-size:13.5px;font-weight:700}
@@ -250,14 +254,7 @@ const SIT=[
  wa:["Mai wants to work at school on Saturday morning.","Mai wants to play basketball on Saturday.","Mai wants to make the poster alone."],
  wb:["Lan wants to work on Sunday because she has a match.","Lan does not want to make a poster.","Lan wants to work at school on Saturday morning."],
  wc:["Both girls want to finish the poster by Monday.","Both girls want to play basketball.","Both girls want a new teacher."],
- model:"We can work together on Saturday afternoon after Lan's match, so both of us are happy and the poster is ready by Monday."},
-{title:"Library noise",a:"Nam",b:"Ben",
- en:"Nam and Ben are at the same table in the library. Nam wants a quiet place to study for a test. Ben wants to talk with his friends about their homework.",
- vi:"Nam và Ben ngồi cùng một bàn trong thư viện. Nam muốn một nơi yên tĩnh để ôn bài kiểm tra. Ben muốn nói chuyện với bạn về bài tập về nhà.",
- wa:["Nam wants a quiet place to study.","Nam wants to talk with his friends.","Nam wants to leave the library."],
- wb:["Ben wants to talk with his friends about homework.","Ben wants a quiet place to sleep.","Ben wants to study alone."],
- wc:["Both boys want to use the library and do well in class.","Both boys want to go home.","Both boys want to play games."],
- model:"Ben and his friends can use the group study room for their discussion, and Nam can stay at the quiet table, so each side gets what they need."}
+ model:"We can work together on Saturday afternoon after Lan's match, so both of us are happy and the poster is ready by Monday."}
 ];
 
 /* Tiết 3: 3 bản ghi */
@@ -303,6 +300,7 @@ function syncUI(){
 }
 function setSt(s){SYNC.st=s;syncUI()}
 const bsDone=()=>SIT.filter((s,i)=>store.bs[i]&&store.bs[i].p).length;
+const avgScore=()=>{const a=REC.map((r,i)=>store.rc[i]&&store.rc[i].sent?store.rc[i].score:null).filter(x=>x!=null);return a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):null};
 const rcSent=()=>REC.filter((r,i)=>store.rc[i]&&store.rc[i].sent).length;
 function buildGate(){
   const hard=W.filter(w=>(store.f.w[w.en]||0)>0&&mOf(w.en)<MAXM).map(w=>w.en);
@@ -314,11 +312,11 @@ function buildGate(){
     if(b.s)details.push({part:"Tiết 2 · Tình huống "+(i+1)+" · Giải pháp win-win",question:s.title,answer:b.s,correct:s.model,result:b.p?"Đạt":"Chưa đạt"});
   });
   REC.forEach((r,i)=>{const c=store.rc[i];if(!c)return;
-    details.push({part:"Tiết 3 · Bài đọc · "+r.title,question:REC_TITLE,answer:"",correct:r.text,result:c.sent?"Đã gửi file ghi âm":"Chưa gửi ghi âm"});});
+    details.push({part:"Tiết 3 · Bài đọc · "+r.title,question:REC_TITLE,answer:"",correct:r.text,result:c.sent?"Đã gửi file ghi âm"+(c.score!=null?" · điểm phát âm "+c.score+"/100":" · chưa có điểm tự động"):"Chưa gửi ghi âm"});});
   return {type:"submit",name:store.name,lesson:LESSON,
     summary:{vocab:"Tiết 1: đạt "+mastered().length+"/"+W.length+" từ (đúng "+MAXM+" lần) · đã học "+W.filter(w=>store.f.seen[w.en]).length+" từ",
       gram:"Tiết 2: giải pháp win-win đạt "+bsDone()+"/"+SIT.length+" tình huống",ctx:"",
-      rec:"Tiết 3: đã gửi ghi âm "+rcSent()+"/"+REC.length,para:"",
+      rec:"Tiết 3: đã gửi ghi âm "+rcSent()+"/"+REC.length+(avgScore()!=null?" · điểm phát âm TB "+avgScore()+"/100":""),para:"",
       feedback:hard.length?"Cần ôn lại (đã từng sai, chưa đạt): "+hard.slice(0,15).join(", "):"Không có từ nào đang bị sai."},details};
 }
 async function post(body){
@@ -498,7 +496,7 @@ function view2(){
     const listOk=b.l.filter(x=>x.trim().split(/\s+/).filter(Boolean).length>=3).length>=2;
   const chk=S.so[i].res?`<ul class="chk">${S.so[i].res.map(r=>`<li class="${r.ok?"ok":"no"}">${r.ok?"✓":"✗"} ${esc(r.label)}</li>`).join("")}</ul>`:"";
   return `<div class="panel" style="--ac:var(--p2)"><p class="lead">Mỗi tình huống có hai bên muốn hai điều khác nhau. Cả 3 bước đều hiện sẵn bên dưới: (1) mỗi bên muốn gì, (2) liệt kê phương án, (3) viết giải pháp win-win.</p>
-  <div class="sits" role="group" aria-label="Chọn tình huống">${tabs}</div>
+  ${SIT.length>1?`<div class="sits" role="group" aria-label="Chọn tình huống">${tabs}</div>`:""}
   <div class="story"><h2>${i+1}. ${esc(s.title)}</h2><p>${esc(s.en)} ${spk(s.en)}</p>
     <p class="muted">${esc(s.vi)}</p>
     <div class="sides"><div class="side"><b>${esc(s.a)}</b>Bên A</div><div class="side"><b>${esc(s.b)}</b>Bên B</div></div></div>
@@ -526,11 +524,11 @@ function view2(){
 }
 
 /* ===== Tiết 3 ===== */
-function rc(i){return store.rc[i]=store.rc[i]||{sent:0,dur:0}}
+function rc(i){return store.rc[i]=store.rc[i]||{sent:0,dur:0,score:null}}
 function view3(){
   const vocabUsed=W.filter(w=>new RegExp("(?<![A-Za-z])"+w.en.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?![A-Za-z])","i").test(REC.map(r=>r.text).join(" "))).length;
   return `<div class="panel" style="--ac:var(--p3)"><h2 style="margin:0 0 4px">${esc(REC_TITLE)}</h2>
-  <p class="lead">Bài đọc ngắn dùng ${vocabUsed} từ vựng của bài (từ in đậm màu). Em nghe cô đọc mẫu, đọc to từng đoạn, ghi âm rồi bấm “Gửi cho cô”.</p>
+  <p class="lead">Bài đọc ngắn dùng ${vocabUsed} từ vựng của bài (từ in đậm màu). Em nghe cô đọc mẫu, đọc to từng đoạn và ghi âm. Máy sẽ chấm điểm phát âm ngay, rồi em bấm “Gửi cho cô” để cô nhận cả file và điểm.</p>
   ${store.name?"":`<div class="fb info" style="margin:0 0 12px">Gõ tên của em ở ô phía trên trước khi gửi bản ghi âm.</div>`}
   ${REC.map((r,i)=>recCard(i)).join("")}</div>`;
 }
@@ -539,8 +537,15 @@ function recCard(i){
   let recUI="";
   if(st.state==="rec")recUI=`<button class="recbtn stop" data-act="recstop" data-i="${i}"><i></i> Dừng <span id="rt${i}">0:00</span></button>`;
   else recUI=`<div class="row"><button class="recbtn" data-act="recstart" data-i="${i}"><i></i> ${st.url?"Ghi lại":"Bắt đầu ghi âm"}</button></div>`;
-  if(st.url&&st.state!=="rec")recUI+=`<audio controls src="${st.url}"></audio><div class="row"><button class="btn" data-act="recsend" data-i="${i}" ${st.state==="sending"||!store.name?"disabled":""}>${c.sent?"Gửi lại cho cô":"Gửi cho cô"}</button></div>`;
-  if(c.sent&&!st.url)recUI+=`<div class="fb ok">Đã gửi bản ghi âm này cho cô.</div>`;
+  if(st.state==="scoring")recUI+=`<div class="fb info">Đang chấm điểm phát âm…</div>`;
+  if(st.res&&st.state!=="rec"&&st.state!=="scoring"){
+    recUI+= st.res.heard?`<div class="score"><div class="sc ${st.res.score>=80?"g":st.res.score>=60?"m":"b"}">${st.res.score}<small>/100</small></div><div><b>Điểm phát âm</b><br><span class="muted">${esc(verdict(st.res.score))}</span></div></div>
+      <p class="rtext sm">${st.res.words.map(x=>`<span class="${x.ok?"wok":"wno"}">${esc(x.w)}</span>`).join(" ")}</p>`
+      :`<div class="fb no">Máy chưa nghe được giọng của em. Em ghi lại gần micro hơn nhé. Em vẫn có thể gửi, cô sẽ nghe file.</div>`;
+  }
+  if(st.noSR&&st.url&&st.state!=="scoring")recUI+=`<div class="fb info">Trình duyệt này chưa chấm điểm tự động được. Em dùng Chrome hoặc Safari để có điểm. Em vẫn gửi bản ghi cho cô được.</div>`;
+  if(st.url&&st.state!=="rec")recUI+=`<audio controls src="${st.url}"></audio><div class="row"><button class="btn" data-act="recsend" data-i="${i}" ${st.state==="sending"||st.state==="scoring"||!store.name?"disabled":""}>${c.sent?"Gửi lại cho cô":"Gửi cho cô"}${st.res&&st.res.heard?" (điểm "+st.res.score+")":""}</button></div>`;
+  if(c.sent&&!st.url)recUI+=`<div class="fb ok">Đã gửi bản ghi âm này cho cô.${c.score!=null?" Điểm phát âm: "+c.score+"/100.":""}</div>`;
   if(st.msg)recUI+=`<div class="fb ${st.msg.startsWith("✓")?"ok":"no"}">${esc(st.msg)}</div>`;
   return `<div class="rcard ${c.sent?"done":""}"><h3>${esc(r.title)} ${c.sent?"✓":""}</h3>
     <p class="rtext">${hl(r.text)}</p>
@@ -548,6 +553,35 @@ function recCard(i){
     <p class="muted" style="margin:6px 0 10px;font-size:14px">${esc(r.vi)}</p>
     ${recUI}</div>`;
 }
+
+/* ===== chấm phát âm (nhận dạng giọng nói + so với bài mẫu) ===== */
+const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+const tok=s=>String(s).toLowerCase().replace(/[’`]/g,"'").replace(/-/g," ").replace(/[^a-z' ]/g," ").split(/\s+/).filter(Boolean);
+function lev(a,b){const d=[];for(let i=0;i<=a.length;i++){d[i]=[i];for(let j=1;j<=b.length;j++)d[i][j]=i?0:j}
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+const same=(a,b)=>a===b||(a.length>=6&&b.length>=6&&lev(a,b)<=1);
+function scoreRead(target,heard){
+  const T=tok(target),H=tok(heard),n=T.length,m=H.length;
+  const L=[];for(let i=0;i<=n;i++){L[i]=new Array(m+1).fill(0)}
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)L[i][j]=same(T[i-1],H[j-1])?L[i-1][j-1]+1:Math.max(L[i-1][j],L[i][j-1]);
+  const ok=new Array(n).fill(false);let i=n,j=m;
+  while(i>0&&j>0){if(same(T[i-1],H[j-1])){ok[i-1]=true;i--;j--}else if(L[i-1][j]>=L[i][j-1])i--;else j--}
+  const hit=ok.filter(Boolean).length;
+  return {words:T.map((w,k)=>({w,ok:ok[k]})),score:n?Math.round(hit/n*100):0,heard:H.length>0};
+}
+const verdict=s=>s>=80?"Rất tốt! Em đọc rõ và đủ từ.":s>=60?"Khá tốt. Em đọc lại các từ màu đỏ cho rõ hơn nhé.":"Em nghe cô đọc mẫu rồi thử lại, đọc chậm và rõ từng từ.";
+let REC_SR=null;
+function srStart(st){
+  st.heard="";if(!SRC){st.noSR=true;return}
+  try{
+    const sr=new SRC();sr.lang="en-US";sr.continuous=true;sr.interimResults=true;REC_SR=sr;st.base="";
+    sr.onresult=e=>{let t="";for(let k=0;k<e.results.length;k++)t+=e.results[k][0].transcript+" ";st.heard=(st.base+" "+t).trim()};
+    sr.onend=()=>{if(st.state==="rec"&&REC_SR===sr){st.base=st.heard;try{sr.start()}catch(e){}}};
+    sr.onerror=()=>{};
+    sr.start();
+  }catch(e){st.noSR=true}
+}
+function srStop(){const s=REC_SR;REC_SR=null;try{if(s)s.stop()}catch(e){}}
 
 /* ghi âm */
 let REC_STREAM=null,REC_MR=null,REC_TIMER=null;
@@ -569,13 +603,14 @@ async function recStart(i){
       const type=REC_MR.mimeType||mime||"audio/webm";const blob=new Blob(chunks,{type});
       if(st.url)URL.revokeObjectURL(st.url);
       st.blob=blob;st.url=URL.createObjectURL(blob);st.state="idle";st.sec=Math.round((Date.now()-t0)/1000);st.msg="";
-      render();
+      st.state="scoring";render();
+      setTimeout(()=>{st.res=st.noSR?null:scoreRead(REC[i].text,st.heard);st.state="idle";render()},900);
     };
-    REC_MR.start();st.state="rec";st.msg="";render();
+    REC_MR.start();st.state="rec";st.msg="";st.res=null;st.noSR=false;srStart(st);render();
     REC_TIMER=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000),el=document.getElementById("rt"+i);if(el)el.textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(s>=30)recStop(i)},500);
   }catch(e){st.state="idle";st.msg="Không mở được micro. Hãy bấm “Cho phép” micro khi trình duyệt hỏi và mở link bằng Chrome hoặc Safari.";render()}
 }
-function recStop(i){try{if(REC_MR&&REC_MR.state!=="inactive")REC_MR.stop()}catch(e){}}
+function recStop(i){srStop();try{if(REC_MR&&REC_MR.state!=="inactive")REC_MR.stop()}catch(e){}}
 const b64=blob=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(",")[1]||"");fr.onerror=rej;fr.readAsDataURL(blob)});
 async function recSend(i){
   const st=S.R[i],c=rc(i),r=REC[i];
@@ -585,9 +620,9 @@ async function recSend(i){
   try{
     const mime=st.blob.type||"audio/webm",ext=/mp4/.test(mime)?"m4a":/ogg/.test(mime)?"ogg":"webm";
     const audio=await b64(st.blob);
-    const ok=await post(JSON.stringify({type:"audio",name:store.name,lesson:LESSON,file:"StudyTime_"+(i+1)+"."+ext,label:"Bài đọc "+(i+1)+" · "+r.title,score:null,dur:st.sec,target:r.text,transcript:"",audio,mime}));
+    const ok=await post(JSON.stringify({type:"audio",name:store.name,lesson:LESSON,file:"StudyTime_"+(i+1)+"."+ext,label:"Bài đọc "+(i+1)+" · "+r.title,score:(st.res&&st.res.heard)?st.res.score:null,dur:st.sec,target:r.text,transcript:st.heard||"",audio,mime}));
     st.state="idle";
-    if(ok){c.sent=1;c.dur=st.sec;save();st.msg="✓ Đã gửi cho cô";send()}else st.msg="Chưa gửi được. Kiểm tra mạng rồi bấm gửi lại."
+    if(ok){c.sent=1;c.dur=st.sec;c.score=(st.res&&st.res.heard)?st.res.score:null;save();st.msg="✓ Đã gửi cho cô";send()}else st.msg="Chưa gửi được. Kiểm tra mạng rồi bấm gửi lại."
   }catch(e){st.state="idle";st.msg="Chưa gửi được. Kiểm tra mạng rồi bấm gửi lại."}
   render();
 }
