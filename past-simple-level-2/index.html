@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Past Simple – Level 2 (A2)</title>
+<style>
+  :root{--bg:#fbf8f1;--ink:#26323a;--accent:#d9622b;--accent2:#2b7a78;--card:#fff;--line:#e6dfd0;--soft:#fff3e6;--good:#e4f5e8;--goodb:#4caf6a;--bad:#fde8e6;--badb:#d9534f}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Segoe UI",system-ui,sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px 70px}
+  header{padding:18px 0 6px}
+  h1{font-size:28px;margin:0 0 2px}
+  .sub{color:#5b6b73;margin:0}
+  nav{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+  nav button{background:#fff;color:var(--accent2);border:1px solid var(--accent2);border-radius:999px;padding:5px 14px;font-size:15px;margin:0}
+  nav button:hover{background:var(--accent2);color:#fff}
+  section{margin-top:26px}
+  h2.sec{font-size:23px;margin:0 0 4px;color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:14px 0}
+  .card h3{margin:0 0 8px;font-size:19px;color:var(--accent2)}
+  .tag{display:inline-block;background:var(--accent);color:#fff;border-radius:999px;font-size:13px;padding:1px 10px;margin-right:6px;vertical-align:middle}
+  .vi{color:#5b6b73;font-size:15px}
+  table{border-collapse:collapse;width:100%;font-size:16px}
+  th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:var(--soft)}
+  .ipa{color:#7a3b12;font-family:"Segoe UI Symbol","Lucida Sans Unicode",serif}
+  .frame{background:var(--soft);border-left:4px solid var(--accent);padding:9px 14px;border-radius:6px;margin:8px 0}
+  button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;cursor:pointer;margin:6px 8px 0 0}
+  button.alt{background:var(--accent2)}
+  button.ghost{background:#fff;color:var(--accent2);border:1px solid var(--accent2)}
+  button:hover{filter:brightness(1.07)}
+  button:disabled{opacity:.5;cursor:default}
+  .say{background:#fff;color:var(--accent2);border:1px solid var(--accent2);border-radius:999px;padding:0 9px;margin:0 0 0 4px;font-size:15px;line-height:1.5}
+  .qq{border-top:1px dashed var(--line);padding:10px 0}
+  .qq:first-of-type{border-top:0}
+  .opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .opt{background:#fff;color:var(--ink);border:1px solid #cfc6b2;margin:0;padding:6px 14px}
+  .opt.right{background:var(--good);border-color:var(--goodb)}
+  .opt.wrong{background:var(--bad);border-color:var(--badb)}
+  .fb{font-size:15px;margin-top:4px;color:#44525a}
+  .score{font-weight:700;color:var(--accent2)}
+  .hint{font-size:14px;color:#6b7a82}
+  .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+  /* flashcards */
+  .fcbox{text-align:center}
+  .flash{min-height:190px;border:2px solid var(--accent2);border-radius:16px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;cursor:pointer;user-select:none}
+  .flash .big{font-size:34px;font-weight:700;color:var(--accent2)}
+  .flash .ex{margin-top:8px;font-style:italic}
+  .bar{height:8px;background:#eee;border-radius:99px;overflow:hidden;margin:8px 0}
+  .bar i{display:block;height:100%;background:var(--accent2);width:0}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .chip{font-size:13px;border-radius:99px;padding:1px 10px;background:#eee}
+  .chip.seen{background:#d6efe8;color:#1d5a58}
+  textarea{width:100%;min-height:150px;border:1px solid #cfc6b2;border-radius:8px;padding:8px 10px;font:inherit;resize:vertical}
+  .pic{width:100%;border-radius:10px;border:1px solid var(--line);display:block}
+  .checks span{display:inline-block;margin-right:14px}
+  audio{width:100%;margin-top:8px}
+  .msg{font-size:14px;color:var(--accent2)}
+  .warn{background:#fff7d6;border:1px solid #e6cf6a;border-radius:8px;padding:8px 12px;font-size:15px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🕰️ Past Simple – Level 2</h1>
+  <p class="sub">Thì quá khứ đơn · A2 · Learn → Practise → Tell the story</p>
+</header>
+<nav>
+  <button data-go="s1">1 · Theory &amp; Sounds</button>
+  <button data-go="s2">2 · Choose the tense</button>
+  <button data-go="s3">3 · Story connectors</button>
+  <button data-go="s4">4 · Write &amp; Speak</button>
+</nav>
+
+<!-- ============ SECTION 1 ============ -->
+<section id="s1">
+  <h2 class="sec">Mục 1 · Lý thuyết &amp; Phát âm</h2>
+
+  <div class="card">
+    <h3><span class="tag">1A</span>Cấu trúc: khẳng định, phủ định, câu hỏi</h3>
+    <table>
+      <tr><th></th><th>Cấu trúc</th><th>Ví dụ</th></tr>
+      <tr><td><b>Khẳng định</b> (+)</td><td>S + <b>V-ed</b> / <b>V2</b> (bất quy tắc)</td><td>She <b>called</b> the fire station. / He <b>took</b> the cat.</td></tr>
+      <tr><td><b>Phủ định</b> (–)</td><td>S + <b>didn't</b> + V (nguyên mẫu)</td><td>They <b>didn't call</b> their mum.</td></tr>
+      <tr><td><b>Câu hỏi</b> (?)</td><td><b>Did</b> + S + V (nguyên mẫu)?</td><td><b>Did</b> you <b>see</b> the cat? – Yes, I <b>did</b>. / No, I <b>didn't</b>.</td></tr>
+      <tr><td>Động từ <b>be</b></td><td>was / were (không dùng did)</td><td>I <b>was</b> worried. They <b>weren't</b> at home. <b>Were</b> you scared?</td></tr>
+    </table>
+    <p class="hint">Sau <b>did / didn't</b> luôn dùng động từ nguyên mẫu (không thêm -ed): <i>didn't play</i> ✔ &nbsp; <i>didn't played</i> ✘</p>
+    <p><b>Quiz 1A</b> · <span class="score" id="q1a-score"></span></p>
+    <div id="q1a"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">1B</span>Thêm -ed cho động từ có quy tắc</h3>
+    <table>
+      <tr><th>Quy tắc</th><th>Ví dụ</th></tr>
+      <tr><td>Thông thường: + <b>ed</b></td><td>play → play<b>ed</b> /pleɪd/ <button class="say" data-say="played">🔊</button></td></tr>
+      <tr><td>Kết thúc bằng <b>e</b>: + <b>d</b></td><td>decide /dɪˈsaɪd/ (quyết định) → decide<b>d</b> <button class="say" data-say="decided">🔊</button></td></tr>
+      <tr><td>Phụ âm – nguyên âm – phụ âm, <b>trọng âm ở âm cuối</b> (hoặc từ 1 âm tiết): <b>gấp đôi</b> phụ âm cuối + ed</td><td>stop (ngưng) → sto<b>pp</b>ed <button class="say" data-say="stopped">🔊</button><br>prefer /prɪˈfɜː/ (thích hơn) → prefe<b>rr</b>ed <button class="say" data-say="preferred">🔊</button><br>regret /rɪˈɡret/ (hối tiếc) → regre<b>tt</b>ed <button class="say" data-say="regretted">🔊</button></td></tr>
+      <tr><td>Phụ âm + <b>y</b> → <b>ied</b></td><td>study → stud<b>ied</b> · try → tr<b>ied</b></td></tr>
+      <tr><td>Nguyên âm + <b>y</b>: + ed (giữ y)</td><td>play → play<b>ed</b> · enjoy → enjoy<b>ed</b></td></tr>
+    </table>
+    <p><b>Quiz 1B</b> · <span class="score" id="q1b-score"></span></p>
+    <div id="q1b"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">1C</span>Động từ bất quy tắc – nhận biết</h3>
+    <table>
+      <tr><th>V1</th><th>V2 (quá khứ)</th><th>Nghĩa</th></tr>
+      <tr><td>teach <span class="ipa">/tiːtʃ/</span><button class="say" data-say="teach">🔊</button></td><td><b>taught</b> <span class="ipa">/tɔːt/</span><button class="say" data-say="taught">🔊</button></td><td>dạy</td></tr>
+      <tr><td>take <span class="ipa">/teɪk/</span><button class="say" data-say="take">🔊</button></td><td><b>took</b> <span class="ipa">/tʊk/</span><button class="say" data-say="took">🔊</button></td><td>lấy, cầm, đưa đi</td></tr>
+      <tr><td>read <span class="ipa">/riːd/</span><button class="say" data-say="read">🔊</button></td><td><b>read</b> <span class="ipa">/red/</span> (viết giống, đọc khác!)</td><td>đọc</td></tr>
+      <tr><td>hear <span class="ipa">/hɪə(r)/</span><button class="say" data-say="hear">🔊</button></td><td><b>heard</b> <span class="ipa">/hɜːd/</span><button class="say" data-say="heard">🔊</button></td><td>nghe thấy</td></tr>
+      <tr><td>think <span class="ipa">/θɪŋk/</span><button class="say" data-say="think">🔊</button></td><td><b>thought</b> <span class="ipa">/θɔːt/</span><button class="say" data-say="thought">🔊</button></td><td>nghĩ</td></tr>
+    </table>
+    <p><b>Quiz 1C</b> · <span class="score" id="q1c-score"></span></p>
+    <div id="q1c"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">1D</span>Nhận diện âm đuôi -ed: /t/, /d/, /ɪd/</h3>
+    <table>
+      <tr><th>Âm cuối của V1</th><th>-ed đọc là</th><th>Ví dụ</th></tr>
+      <tr><td>/p/ /k/ /f/ /s/ /ʃ/ /tʃ/ (âm vô thanh)</td><td><b>/t/</b></td><td>stopped, helped, watched, washed</td></tr>
+      <tr><td>/t/ hoặc /d/</td><td><b>/ɪd/</b></td><td>decided, wanted, needed</td></tr>
+      <tr><td>Các âm còn lại (nguyên âm + âm hữu thanh)</td><td><b>/d/</b></td><td>played, called, lived</td></tr>
+    </table>
+    <p class="hint">Bấm 🔊 để nghe từ, rồi chọn cách đọc đuôi -ed.</p>
+    <p><b>Quiz 1D</b> · <span class="score" id="q1d-score"></span></p>
+    <div id="q1d"></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2 ============ -->
+<section id="s2">
+  <h2 class="sec">Mục 2 · Đọc câu tiếng Việt, chọn thì phù hợp</h2>
+  <div class="card">
+    <p>Đọc câu tiếng Việt, tìm <b>dấu hiệu thời gian</b> và chọn thì đúng. Sau khi chọn, bạn sẽ thấy câu tiếng Anh mẫu.</p>
+    <p><b>Điểm</b> · <span class="score" id="q2-score"></span></p>
+    <div id="q2"></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3 ============ -->
+<section id="s3">
+  <h2 class="sec">Mục 3 · Từ nối để kể chuyện (Flashcards + kiểm tra xen kẽ)</h2>
+  <div class="card fcbox">
+    <p class="hint" style="margin-top:0">Lật thẻ mới → hệ thống kiểm tra bạn bằng một thẻ <b>đã lật trước đó</b> (ngẫu nhiên; thẻ sai nhiều sẽ xuất hiện nhiều hơn). Thẻ chưa lật sẽ không bị kiểm tra.</p>
+    <div class="bar"><i id="fc-bar"></i></div>
+    <div class="hint" id="fc-status"></div>
+    <div id="fc-area"></div>
+    <div class="chips" id="fc-chips"></div>
+    <div class="tools" style="justify-content:center"><button class="ghost" id="fc-reset">Làm lại từ đầu</button></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 4 ============ -->
+<section id="s4">
+  <h2 class="sec">Mục 4 · Viết lại câu chuyện &amp; ghi âm</h2>
+  <div class="card">
+    <h3><span class="tag">4A</span>Look at the pictures</h3>
+    <img class="pic" src="story.png" alt="Three pictures: a boy and a girl see a cat stuck in a tree; a fire engine arrives and the children wave; a firefighter climbs a ladder and rescues the cat.">
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">4B</span>Words you need <span class="vi">(bấm 🔊 để nghe)</span></h3>
+    <table id="words"></table>
+    <div class="tools"><button class="alt" id="listen-all">🔊 Nghe tất cả</button><button class="ghost" id="stop-all">⏹ Dừng</button></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">4C</span>Write the story (6–8 sentences)</h3>
+    <div class="frame">Dùng <b>was / were</b>, ít nhất <b>3 từ nối</b> (First, Then, Finally…) và vài động từ quá khứ (<i>saw, called, arrived, climbed, took</i>).<br>Bắt đầu: <i>One sunny afternoon, a boy and a girl were in the garden...</i></div>
+    <textarea id="story" placeholder="One sunny afternoon, ..."></textarea>
+    <div class="checks hint" id="story-check"></div>
+    <div class="tools"><button id="copy-story">Copy my story</button><span class="msg" id="copy-msg"></span></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag">4D</span>Read your story aloud &amp; record</h3>
+    <p>Đọc to bài viết của bạn (30–60 giây). Chú ý: <b>was /wəz/ · were /wə/</b>, đuôi <b>-ed</b> (/t/, /d/, /ɪd/) và trọng âm.</p>
+    <div class="tools">
+      <button id="rec-start">🎙️ Bắt đầu ghi âm</button>
+      <button class="alt" id="rec-stop" disabled>⏹ Dừng</button>
+      <button class="ghost" id="dict-start" style="display:none">🗣️ Đọc &amp; hiện chữ (dictation)</button>
+    </div>
+    <audio id="rec-audio" controls style="display:none"></audio>
+    <div class="msg" id="rec-msg"></div>
+    <div id="dict-out" class="frame" style="display:none"></div>
+    <div class="warn" id="rec-warn" style="display:none"></div>
+  </div>
+</section>
+
+<p class="hint" style="margin-top:30px">Bài của bạn được lưu trong trình duyệt này khi đang làm.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var KEY="past_l2_v1";
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+var store=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function $(id){return document.getElementById(id)}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+/* ---------- nav ---------- */
+document.querySelectorAll("nav button").forEach(function(b){
+  b.onclick=function(){var el=$(b.dataset.go);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})};
+});
+
+/* ---------- speech ---------- */
+var ttsNS=null;
+try{ if(window.claude&&window.claude.use){ window.claude.use("tts").then(function(n){ttsNS=n}).catch(function(){}) } }catch(e){}
+function fallbackSpeak(text,done){
+  if(!("speechSynthesis" in window)){if(done)done();return}
+  try{
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=0.85;
+    u.onend=function(){if(done)done()};u.onerror=function(){if(done)done()};
+    window.speechSynthesis.speak(u);
+  }catch(e){if(done)done()}
+}
+function speak(text,done){
+  if(ttsNS){
+    ttsNS.speak(text,{language:"en",rate:0.9}).then(function(){if(done)done()}).catch(function(){fallbackSpeak(text,done)});
+  }else fallbackSpeak(text,done);
+}
+function stopSpeak(){
+  try{if(ttsNS)ttsNS.stop()}catch(e){}
+  try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest&&e.target.closest(".say");
+  if(b){speak(b.getAttribute("data-say"))}
+});
+
+/* ---------- quiz engine ---------- */
+store.q=store.q||{};
+function quiz(id,items,key){
+  var root=$(id),sc=$(id+"-score");
+  store.q[key]=store.q[key]||{};
+  var done=store.q[key];
+  root.innerHTML="";
+  function score(){
+    var r=0,n=0;
+    items.forEach(function(it,i){if(done[i]!==undefined){n++;if(done[i]===it.a)r++}});
+    sc.textContent=r+" / "+items.length+(n===items.length?" ✓ hoàn thành":"");
+  }
+  items.forEach(function(it,i){
+    var d=document.createElement("div");d.className="qq";
+    d.innerHTML='<div><b>'+(i+1)+'.</b> '+it.q+(it.say?' <button class="say" data-say="'+it.say+'">🔊</button>':'')+'</div><div class="opts"></div><div class="fb"></div>';
+    var o=d.querySelector(".opts"),fb=d.querySelector(".fb"),btns=[];
+    function paint(){
+      btns.forEach(function(b,k){
+        b.disabled=true;
+        if(k===it.a)b.classList.add("right");
+        else if(k===done[i])b.classList.add("wrong");
+      });
+      fb.innerHTML=(done[i]===it.a?"✅ ":"❌ ")+it.why;
+    }
+    it.o.forEach(function(txt,k){
+      var b=document.createElement("button");b.className="opt";b.textContent=txt;
+      b.onclick=function(){if(done[i]!==undefined)return;done[i]=k;save();paint();score()};
+      o.appendChild(b);btns.push(b);
+    });
+    if(done[i]!==undefined)paint();
+    root.appendChild(d);
+  });
+  var rb=document.createElement("button");rb.className="ghost";rb.textContent="Làm lại";
+  rb.onclick=function(){store.q[key]={};save();quiz(id,items,key)};
+  root.appendChild(rb);
+  score();
+}
+
+/* ---------- data: 1A ---------- */
+quiz("q1a",[
+ {q:"She ___ to the cinema last night.",o:["go","went","goes"],a:1,why:"Khẳng định, quá khứ bất quy tắc: go → <b>went</b>."},
+ {q:"We ___ football yesterday.",o:["didn't play","didn't played","not played"],a:0,why:"Phủ định: <b>didn't + V nguyên mẫu</b> (didn't play)."},
+ {q:"___ they call the fire station?",o:["Did","Were","Do"],a:0,why:"Câu hỏi với động từ thường: <b>Did + S + V</b>."},
+ {q:"Did he see the cat? – Yes, he ___.",o:["did","saw","was"],a:0,why:"Trả lời ngắn: <b>Yes, he did.</b> (không lặp lại động từ)."},
+ {q:"The children ___ happy at the end.",o:["was","were","did"],a:1,why:"Động từ <b>be</b>: children (số nhiều) → <b>were</b>."}
+],"1a");
+
+/* ---------- 1B ---------- */
+quiz("q1b",[
+ {q:"decide (quyết định) → past simple?",o:["decided","decideed","deciden"],a:0,why:"Kết thúc bằng e → chỉ thêm <b>d</b>: decide<b>d</b>.",say:"decided"},
+ {q:"prefer (thích hơn) → past simple?",o:["prefered","preferred","preferd"],a:1,why:"Trọng âm ở âm cuối (pre<b>FER</b>), CVC → gấp đôi r: pre<b>ferr</b>ed.",say:"preferred"},
+ {q:"regret (hối tiếc) → past simple?",o:["regreted","regretd","regretted"],a:2,why:"Trọng âm ở âm cuối (re<b>GRET</b>) → gấp đôi t: regre<b>tt</b>ed.",say:"regretted"},
+ {q:"stop (ngưng) → past simple?",o:["stoped","stopped","stopt"],a:1,why:"1 âm tiết, CVC → gấp đôi p: sto<b>pp</b>ed.",say:"stopped"},
+ {q:"play (chơi) → past simple?",o:["plaied","played","plaid"],a:1,why:"Nguyên âm + y → giữ y, thêm <b>ed</b>: play<b>ed</b>.",say:"played"}
+],"1b");
+
+/* ---------- 1C ---------- */
+quiz("q1c",[
+ {q:"Last year, Ms Lan ___ me to cook. (teach)",o:["teached","taught","tought"],a:1,why:"teach → <b>taught</b> /tɔːt/."},
+ {q:"He ___ my bag by mistake. (take)",o:["taked","took","taken"],a:1,why:"take → <b>took</b> /tʊk/ (taken là phân từ, chưa học)."},
+ {q:"I ___ this book yesterday. (read)",o:["readed","read /red/","reded"],a:1,why:"read → <b>read</b> viết giống nhưng đọc là /red/."},
+ {q:"We ___ a loud noise last night. (hear)",o:["heared","heard","hearded"],a:1,why:"hear → <b>heard</b> /hɜːd/."},
+ {q:"She ___ about her family. (think)",o:["thinked","thaught","thought"],a:2,why:"think → <b>thought</b> /θɔːt/."}
+],"1c");
+
+/* ---------- 1D ---------- */
+var snd=[["stopped",0],["played",1],["decided",2],["watched",0],["called",1],["wanted",2],["helped",0],["lived",1],["needed",2],["washed",0]];
+var sndWhy=["Âm cuối /p/ vô thanh → <b>/t/</b>.","Âm cuối là nguyên âm → <b>/d/</b>.","Âm cuối /d/ → <b>/ɪd/</b>.","Âm cuối /tʃ/ vô thanh → <b>/t/</b>.","Âm cuối /l/ hữu thanh → <b>/d/</b>.","Âm cuối /t/ → <b>/ɪd/</b>.","Âm cuối /p/ → <b>/t/</b>.","Âm cuối /v/ hữu thanh → <b>/d/</b>.","Âm cuối /d/ → <b>/ɪd/</b>.","Âm cuối /ʃ/ vô thanh → <b>/t/</b>."];
+quiz("q1d",snd.map(function(s,i){return {q:"<b>"+s[0]+"</b> – đuôi -ed đọc là:",o:["/t/","/d/","/ɪd/"],a:s[1],why:sndWhy[i],say:s[0]}}),"1d");
+
+/* ---------- Section 2 ---------- */
+var T=["Present simple","Past simple","Present continuous","Future"];
+var s2=[
+ ["Hôm qua tôi đi chợ với mẹ.",1,"“Hôm qua” → quá khứ.","I <b>went</b> to the market with my mum yesterday."],
+ ["Mỗi sáng bố tôi uống cà phê.",0,"“Mỗi sáng” → thói quen, hiện tại đơn.","My dad <b>drinks</b> coffee every morning."],
+ ["Bây giờ em đang làm bài tập.",2,"“Bây giờ … đang” → hiện tại tiếp diễn.","I <b>am doing</b> my homework now."],
+ ["Ngày mai chúng tôi sẽ đi Đà Lạt.",3,"“Ngày mai … sẽ” → tương lai.","We <b>will go</b> / <b>are going to go</b> to Da Lat tomorrow."],
+ ["Tuần trước cô ấy mua một chiếc váy mới.",1,"“Tuần trước” → quá khứ.","She <b>bought</b> a new dress last week."],
+ ["Chị tôi dạy tiếng Anh ở một trường tiểu học.",0,"Nghề nghiệp, sự thật lâu dài → hiện tại đơn.","My sister <b>teaches</b> English at a primary school."],
+ ["Nhìn kìa! Con mèo đang trèo lên cây.",2,"“Nhìn kìa!… đang” → hành động đang xảy ra.","Look! The cat <b>is climbing</b> the tree."],
+ ["Năm sau tôi sẽ học lái xe.",3,"“Năm sau … sẽ” → tương lai.","I <b>will learn</b> to drive next year."],
+ ["Cậu bé đã gọi cứu hỏa vì con mèo bị kẹt.",1,"“đã … vì” kể chuyện đã xảy ra → quá khứ.","The boy <b>called</b> the fire station because the cat was stuck."],
+ ["Trái đất quay quanh mặt trời.",0,"Sự thật hiển nhiên → hiện tại đơn.","The Earth <b>goes</b> around the sun."]
+];
+quiz("q2",s2.map(function(s){return {q:s[0],o:T,a:s[1],why:s[2]+" → "+s[3]}}),"2");
+
+/* ---------- Section 3: flashcards ---------- */
+var cards=[
+ {w:"First,",vi:"Đầu tiên",ex:"___, a boy and a girl saw a cat in the tree."},
+ {w:"Then",vi:"Sau đó",ex:"___ they called the fire station."},
+ {w:"Next,",vi:"Tiếp theo",ex:"___, they waited in the garden."},
+ {w:"After that,",vi:"Sau đó / sau việc đó",ex:"___, the fire engine left the station."},
+ {w:"A few minutes later,",vi:"Vài phút sau",ex:"___ the fire engine arrived."},
+ {w:"Meanwhile,",vi:"Trong khi đó",ex:"___, the cat looked down from the tree."},
+ {w:"Suddenly,",vi:"Đột nhiên",ex:"___, the cat made a small noise."},
+ {w:"At that moment,",vi:"Ngay lúc đó",ex:"___ the children waved to the firefighters."},
+ {w:"Before that,",vi:"Trước đó",ex:"___, the cat climbed up by itself."},
+ {w:"So",vi:"Vì vậy / nên",ex:"The cat was stuck, ___ they called for help."},
+ {w:"Finally,",vi:"Cuối cùng",ex:"___, the firefighter took the cat down."},
+ {w:"In the end,",vi:"Rốt cuộc / kết thúc",ex:"___ everyone was happy."}
+];
+var extra=["However,","Because","For example,","Also,"];
+var fc=store.fc||{idx:0,seen:[],stats:{},phase:"card",flipped:false,quizCard:null,quizType:0,review:0,last:-1};
+store.fc=fc;
+function fcClean(w){return w.replace(/[,]/g,"")}
+function renderChips(){
+  $("fc-chips").innerHTML=cards.map(function(c,i){return '<span class="chip'+(fc.seen.indexOf(i)>-1?' seen':'')+'">'+fcClean(c.w)+'</span>'}).join("");
+}
+function pickQuizCard(){
+  var pool=fc.seen.slice();
+  if(pool.length>1&&fc.last>-1)pool=pool.filter(function(i){return i!==fc.last});
+  var weights=pool.map(function(i){var s=fc.stats[i]||{r:0,w:0};return Math.max(1,2+2*s.w-s.r)});
+  var tot=weights.reduce(function(a,b){return a+b},0),r=Math.random()*tot,k=0;
+  for(;k<pool.length;k++){r-=weights[k];if(r<=0)break}
+  return pool[Math.min(k,pool.length-1)];
+}
+function renderFC(){
+  var area=$("fc-area");
+  var n=cards.length;
+  $("fc-bar").style.width=Math.round(100*fc.seen.length/n)+"%";
+  var corr=0,tot=0;Object.keys(fc.stats).forEach(function(k){corr+=fc.stats[k].r;tot+=fc.stats[k].r+fc.stats[k].w});
+  $("fc-status").textContent="Đã lật "+fc.seen.length+"/"+n+" thẻ · Kiểm tra đúng "+corr+"/"+tot;
+  renderChips();
+  save();
+  if(fc.phase==="card"){
+    var c=cards[fc.idx];
+    area.innerHTML='<div class="flash" id="flash"><div class="big">'+c.w+'</div><div class="hint">'+(fc.flipped?"":"Bấm để lật thẻ · thẻ mới "+(fc.idx+1)+"/"+n)+'</div>'+
+      (fc.flipped?'<div style="font-size:20px;margin-top:6px">'+c.vi+'</div><div class="ex">'+c.ex.replace("___","<b>"+fcClean(c.w)+"</b>")+'</div>':'')+'</div>'+
+      '<div class="tools" style="justify-content:center"><button class="say" data-say="'+fcClean(c.w)+'">🔊</button>'+(fc.flipped?'<button id="fc-test">Kiểm tra tôi ▶</button>':'')+'</div>';
+    $("flash").onclick=function(){
+      if(!fc.flipped){
+        fc.flipped=true;
+        if(fc.seen.indexOf(fc.idx)<0)fc.seen.push(fc.idx);
+        renderFC();
+      }
+    };
+    var t=$("fc-test");
+    if(t)t.onclick=function(){startQuiz("new")};
+  }else if(fc.phase==="quiz"){
+    renderQuiz();
+  }else{
+    var good=0,all=0;Object.keys(fc.stats).forEach(function(k){good+=fc.stats[k].r;all+=fc.stats[k].r+fc.stats[k].w});
+    area.innerHTML='<div class="flash" style="cursor:default"><div class="big">🎉 Hoàn thành!</div><div style="margin-top:8px">Bạn đã học '+n+' từ nối và trả lời đúng '+good+'/'+all+' câu kiểm tra.</div></div>'+
+      '<div class="frame">Thử kể lại câu chuyện bằng miệng với: <i>First, Then, A few minutes later, Finally…</i></div>';
+  }
+}
+function startQuiz(kind){
+  fc.phase="quiz";fc.quizKind=kind;
+  fc.quizCard=pickQuizCard();
+  fc.quizType=Math.random()<0.5?0:1;
+  var c=cards[fc.quizCard];
+  var correct=fcClean(c.w);
+  var pool=fc.seen.filter(function(i){return i!==fc.quizCard}).map(function(i){return fcClean(cards[i].w)});
+  pool=shuffle(pool).slice(0,3);
+  extra.forEach(function(e){if(pool.length<3)pool.push(fcClean(e))});
+  fc.opts=shuffle(pool.concat([correct]));
+  fc.answered=-1;
+  renderFC();
+}
+function renderQuiz(){
+  var c=cards[fc.quizCard],correct=fcClean(c.w);
+  var prompt=fc.quizType===0?'Chọn từ nối nghĩa là: <b>'+c.vi+'</b>':'Điền từ nối: <i>'+c.ex.replace("___","<b>_____</b>")+'</i>';
+  var h='<div class="flash" style="cursor:default;align-items:flex-start;text-align:left"><div class="hint">Kiểm tra từ thẻ đã lật trước đó</div><div style="font-size:19px;margin-top:4px">'+prompt+'</div><div class="opts" id="fc-opts"></div><div class="fb" id="fc-fb"></div></div><div class="tools" style="justify-content:center" id="fc-next"></div>';
+  $("fc-area").innerHTML=h;
+  var o=$("fc-opts");
+  fc.opts.forEach(function(txt,k){
+    var b=document.createElement("button");b.className="opt";b.textContent=txt;
+    if(fc.answered>-1){
+      b.disabled=true;
+      if(txt===correct)b.classList.add("right");else if(k===fc.answered)b.classList.add("wrong");
+    }
+    b.onclick=function(){
+      if(fc.answered>-1)return;
+      fc.answered=k;
+      var st=fc.stats[fc.quizCard]=fc.stats[fc.quizCard]||{r:0,w:0};
+      if(txt===correct)st.r++;else st.w++;
+      fc.last=fc.quizCard;
+      renderFC();
+    };
+    o.appendChild(b);
+  });
+  if(fc.answered>-1){
+    var ok=fc.opts[fc.answered]===correct;
+    $("fc-fb").innerHTML=(ok?"✅ Đúng! ":"❌ Đáp án: <b>"+correct+"</b>. ")+'<i>'+c.ex.replace("___","<b>"+correct+"</b>")+'</i> – '+c.vi;
+    var nx=document.createElement("button");
+    nx.textContent=fc.quizKind==="review"?"Câu tiếp ▶":"Thẻ tiếp theo ▶";
+    nx.onclick=function(){advance()};
+    $("fc-next").appendChild(nx);
+  }
+}
+function advance(){
+  if(fc.quizKind==="new"){
+    fc.idx++;fc.flipped=false;
+    if(fc.idx>=cards.length){fc.phase="quiz";fc.review=0;fc.quizKind="review";startQuiz("review");return}
+    fc.phase="card";renderFC();
+  }else{
+    fc.review=(fc.review||0)+1;
+    if(fc.review>=6){fc.phase="done";renderFC()}else startQuiz("review");
+  }
+}
+$("fc-reset").onclick=function(){
+  fc.idx=0;fc.seen=[];fc.stats={};fc.phase="card";fc.flipped=false;fc.review=0;fc.last=-1;renderFC();
+};
+if(fc.phase==="quiz"&&(!fc.opts||fc.quizCard==null))fc.phase="card";
+renderFC();
+
+/* ---------- Section 4 ---------- */
+var words=[
+ ["cat","/kæt/","con mèo"],["tree","/triː/","cái cây"],["ladder","/ˈlædə(r)/","cái thang"],
+ ["fire engine","/ˈfaɪər ˌendʒɪn/","xe cứu hỏa"],["firefighter","/ˈfaɪəfaɪtə(r)/","lính cứu hỏa"],
+ ["stuck","/stʌk/","mắc kẹt"],["worried","/ˈwʌrid/","lo lắng"],["relieved","/rɪˈliːvd/","nhẹ nhõm"],
+ ["rescue","/ˈreskjuː/","giải cứu"],["call → called","/kɔːl/ → /kɔːld/","gọi"],
+ ["arrive → arrived","/əˈraɪv/ → /əˈraɪvd/","đến nơi"],["climb → climbed","/klaɪm/ → /klaɪmd/","trèo"],
+ ["see → saw","/siː/ → /sɔː/","nhìn thấy"],["take → took","/teɪk/ → /tʊk/","lấy, đưa đi"]
+];
+var wt='<tr><th>Word</th><th>IPA</th><th>Nghĩa</th><th></th></tr>';
+words.forEach(function(w){
+  var say=w[0].split("→").join(" ").replace(/\s+/g," ").trim();
+  wt+='<tr><td><b>'+w[0]+'</b></td><td class="ipa">'+w[1]+'</td><td>'+w[2]+'</td><td><button class="say" data-say="'+say+'">🔊</button></td></tr>';
+});
+$("words").innerHTML=wt;
+var playing=false;
+$("listen-all").onclick=function(){
+  if(playing)return;playing=true;
+  var list=words.map(function(w){return w[0].split("→").join(" ").replace(/\s+/g," ").trim()});
+  var i=0;
+  (function next(){
+    if(!playing||i>=list.length){playing=false;return}
+    speak(list[i++],function(){setTimeout(next,350)});
+  })();
+};
+$("stop-all").onclick=function(){playing=false;stopSpeak()};
+
+var story=$("story");
+if(store.story)story.value=store.story;
+var conn=["first","then","next","after that","a few minutes later","meanwhile","suddenly","at that moment","before that","finally","in the end"];
+var irr=["was","were","saw","took","went","said","came","thought","heard","taught","wasn't","weren't","didn't"];
+function checkStory(){
+  var t=story.value, low=t.toLowerCase();
+  var sentences=(t.match(/[^.!?]+[.!?]+/g)||[]).filter(function(s){return s.trim().length>3}).length;
+  var cs=conn.filter(function(c){return new RegExp("\\b"+c+"\\b").test(low)}).length;
+  var pv=(low.match(/\b\w+ed\b/g)||[]).length;
+  irr.forEach(function(w){var m=low.match(new RegExp("\\b"+w.replace("'","'")+"\\b","g"));if(m)pv+=m.length});
+  $("story-check").innerHTML='<span>'+(sentences>=6?"✅":"⬜")+' Câu: '+sentences+'/6</span><span>'+(cs>=3?"✅":"⬜")+' Từ nối: '+cs+'/3</span><span>'+(pv>=5?"✅":"⬜")+' Động từ quá khứ: '+pv+'/5</span>';
+}
+story.addEventListener("input",function(){store.story=story.value;save();checkStory()});
+checkStory();
+$("copy-story").onclick=function(){
+  var m=$("copy-msg");
+  try{navigator.clipboard.writeText(story.value).then(function(){m.textContent="Đã copy ✓"},function(){m.textContent="Không copy được – hãy bôi đen và copy thủ công."})}
+  catch(e){m.textContent="Không copy được – hãy bôi đen và copy thủ công."}
+};
+
+/* recording */
+var rec=null,stream=null,chunks=[];
+var warn=$("rec-warn");
+function showWarn(t){warn.style.display="block";warn.textContent=t}
+$("rec-start").onclick=function(){
+  warn.style.display="none";
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||typeof MediaRecorder==="undefined"){
+    showWarn("Trình duyệt/khung trang này không cho ghi âm trực tiếp. Hãy ghi âm bằng điện thoại (Voice Memos / Recorder) rồi gửi cho cô.");return;
+  }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+    stream=s;chunks=[];rec=new MediaRecorder(s);
+    rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+    rec.onstop=function(){
+      var b=new Blob(chunks,{type:rec.mimeType||"audio/webm"});
+      var a=$("rec-audio");a.src=URL.createObjectURL(b);a.style.display="block";
+      s.getTracks().forEach(function(t){t.stop()});
+      $("rec-msg").textContent="Nghe lại bài của bạn ở trên. Bản ghi này chỉ nằm trên máy bạn – hãy gửi file ghi âm bằng điện thoại cho cô.";
+    };
+    rec.start();$("rec-start").disabled=true;$("rec-stop").disabled=false;$("rec-msg").textContent="Đang ghi âm… hãy đọc bài viết của bạn.";
+  }).catch(function(){
+    showWarn("Không bật được micro trong trang này. Hãy ghi âm bằng điện thoại (Voice Memos / Recorder) rồi gửi cho cô.");
+  });
+};
+$("rec-stop").onclick=function(){
+  try{if(rec&&rec.state!=="inactive")rec.stop()}catch(e){}
+  $("rec-start").disabled=false;$("rec-stop").disabled=true;
+};
+
+/* dictation fallback */
+(function(){
+  try{
+    if(!(window.claude&&window.claude.use))return;
+    window.claude.use("dictation").then(function(d){
+      if(!d)return;
+      var btn=$("dict-start"),out=$("dict-out"),listening=false,finals="";
+      btn.style.display="inline-block";
+      d.onFinal(function(x){finals+=(finals?" ":"")+x.text;out.textContent=finals});
+      d.onPartial(function(x){out.textContent=finals+(finals?" ":"")+x.text});
+      d.onState(function(s){listening=s.state==="listening";btn.textContent=listening?"⏹ Dừng dictation":"🗣️ Đọc & hiện chữ (dictation)"});
+      btn.onclick=function(){
+        out.style.display="block";
+        if(listening){d.stop().catch(function(){});return}
+        finals="";out.textContent="(đang nghe…)";
+        d.start().catch(function(){});
+      };
+    }).catch(function(){});
+  }catch(e){}
+})();
+})();
+</script>
+</body>
+</html>
