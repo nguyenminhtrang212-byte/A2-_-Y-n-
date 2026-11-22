@@ -57,6 +57,10 @@
   .checks span{display:inline-block;margin-right:14px}
   audio{width:100%;margin-top:8px}
   .msg{font-size:14px;color:var(--accent2)}
+  .namecard input{font:inherit;padding:8px 12px;border:1px solid #cfc6b2;border-radius:8px;width:100%;max-width:340px}
+  .big-btn{font-size:19px;padding:12px 22px}
+  .ok-box{background:#e4f5e8;border:1px solid #4caf6a;border-radius:8px;padding:8px 12px;margin-top:8px}
+  .bad-box{background:#fde8e6;border:1px solid #d9534f;border-radius:8px;padding:8px 12px;margin-top:8px}
   .warn{background:#fff7d6;border:1px solid #e6cf6a;border-radius:8px;padding:8px 12px;font-size:15px;margin-top:8px}
 </style>
 </head>
@@ -71,7 +75,14 @@
   <button data-go="s2">2 · Choose the tense</button>
   <button data-go="s3">3 · Story connectors</button>
   <button data-go="s4">4 · Write &amp; Speak</button>
+  <button data-go="s5">5 · Nộp bài</button>
 </nav>
+
+<div class="card namecard">
+  <b>Tên của em:</b><br>
+  <input type="text" id="stu-name" placeholder="Ví dụ: Yến" autocomplete="name">
+  <div class="hint">Em ghi tên trước khi làm; cô sẽ nhận bài theo tên này.</div>
+</div>
 
 <!-- ============ SECTION 1 ============ -->
 <section id="s1">
@@ -190,10 +201,26 @@
     <div class="msg" id="rec-msg"></div>
     <div id="dict-out" class="frame" style="display:none"></div>
     <div class="warn" id="rec-warn" style="display:none"></div>
+    <div class="tools"><button id="rec-send" style="display:none">📤 Gửi ghi âm cho cô</button></div>
+    <div class="frame" style="margin-top:10px">Không ghi âm được trên trang? Ghi âm bằng điện thoại (Voice Memos / Recorder), rồi chọn file ở đây:<br>
+      <input type="file" id="rec-file" accept="audio/*">
+    </div>
+    <div id="rec-sendmsg"></div>
   </div>
 </section>
 
-<p class="hint" style="margin-top:30px">Bài của bạn được lưu trong trình duyệt này khi đang làm.</p>
+<!-- ============ SECTION 5 ============ -->
+<section id="s5">
+  <h2 class="sec">Mục 5 · Nộp bài cho cô</h2>
+  <div class="card">
+    <p>Khi đã làm xong, bấm nút bên dưới. Kết quả các câu hỏi, bài viết và (nếu đã gửi) file ghi âm sẽ đến cô.</p>
+    <div id="sub-status" class="hint"></div>
+    <button class="big-btn" id="submit-btn">📨 Nộp bài cho cô</button>
+    <div id="sub-msg"></div>
+  </div>
+</section>
+
+<p class="hint" style="margin-top:30px">Bài của em được lưu trong trình duyệt này khi đang làm.</p>
 </div>
 
 <script>
@@ -239,7 +266,10 @@ document.addEventListener("click",function(e){
 
 /* ---------- quiz engine ---------- */
 store.q=store.q||{};
+var REG={};
+var TITLES={"1a":"Mục 1A · Cấu trúc câu","1b":"Mục 1B · Thêm -ed","1c":"Mục 1C · Bất quy tắc","1d":"Mục 1D · Âm đuôi -ed","2":"Mục 2 · Chọn thì"};
 function quiz(id,items,key){
+  REG[key]=items;
   var root=$(id),sc=$(id+"-score");
   store.q[key]=store.q[key]||{};
   var done=store.q[key];
@@ -504,9 +534,9 @@ $("rec-start").onclick=function(){
     rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
     rec.onstop=function(){
       var b=new Blob(chunks,{type:rec.mimeType||"audio/webm"});
-      var a=$("rec-audio");a.src=URL.createObjectURL(b);a.style.display="block";
+      var a=$("rec-audio");a.src=URL.createObjectURL(b);a.style.display="block";window.__setAudioBlob(b);
       s.getTracks().forEach(function(t){t.stop()});
-      $("rec-msg").textContent="Nghe lại bài của bạn ở trên. Bản ghi này chỉ nằm trên máy bạn – hãy gửi file ghi âm bằng điện thoại cho cô.";
+      $("rec-msg").textContent="Nghe lại bài của bạn ở trên. Hài lòng thì bấm “Gửi ghi âm cho cô”.";
     };
     rec.start();$("rec-start").disabled=true;$("rec-stop").disabled=false;$("rec-msg").textContent="Đang ghi âm… hãy đọc bài viết của bạn.";
   }).catch(function(){
@@ -538,6 +568,130 @@ $("rec-stop").onclick=function(){
     }).catch(function(){});
   }catch(e){}
 })();
+
+/* ---------- Nộp bài cho cô ---------- */
+var GATE="https://script.google.com/macros/s/AKfycbwHIIHnQWgc7rSRzIV8EeX0Y7PobNi8_Kbl9ybE47lxbTn_Z5ecoRcDctajXzLGYIk/exec";
+var LESSON="PastSimple_L2";
+store.sent=store.sent||{};
+var nameEl=$("stu-name");
+if(store.name)nameEl.value=store.name;
+nameEl.addEventListener("input",function(){store.name=nameEl.value.trim();save()});
+function strip(s){return String(s).replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim()}
+async function post(body){
+  try{
+    var r=await fetch(GATE,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:body});
+    var j=null;try{j=await r.json()}catch(e){}
+    return !j||j.ok!==false;
+  }catch(e){
+    try{await fetch(GATE,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:body});return true}catch(e2){return false}
+  }
+}
+function b64(blob){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(",")[1]||"")};fr.onerror=rej;fr.readAsDataURL(blob)})}
+function quizStats(key){
+  var items=REG[key]||[],done=(store.q&&store.q[key])||{},r=0,n=0;
+  items.forEach(function(it,i){if(done[i]!==undefined){n++;if(done[i]===it.a)r++}});
+  return {r:r,n:n,total:items.length};
+}
+function storyStats(){
+  var t=story.value||"",low=t.toLowerCase();
+  var sentences=(t.match(/[^.!?]+[.!?]+/g)||[]).filter(function(s){return s.trim().length>3}).length;
+  var cs=conn.filter(function(c){return new RegExp("\\b"+c+"\\b").test(low)});
+  return {sentences:sentences,conns:cs,words:(t.trim()?t.trim().split(/\s+/).length:0)};
+}
+function missing(){
+  var m=[];
+  if(!store.name)m.push("Chưa ghi tên");
+  ["1a","1b","1c","1d","2"].forEach(function(k){var s=quizStats(k);if(s.n<s.total)m.push(TITLES[k]+": còn "+(s.total-s.n)+" câu chưa làm")});
+  var f=store.fc||{seen:[]};if((f.seen||[]).length<cards.length)m.push("Mục 3: mới lật "+(f.seen||[]).length+"/"+cards.length+" thẻ");
+  var st=storyStats();if(st.sentences<6)m.push("Mục 4: bài viết mới có "+st.sentences+" câu (cần ít nhất 6)");
+  if(st.conns.length<3)m.push("Mục 4: mới dùng "+st.conns.length+" từ nối (cần ít nhất 3)");
+  if(!store.sent.audio)m.push("Chưa gửi file ghi âm");
+  return m;
+}
+function buildPayload(){
+  var details=[],weak=[];
+  ["1a","1b","1c","1d","2"].forEach(function(k){
+    var items=REG[k],done=store.q[k]||{};
+    var s=quizStats(k);
+    if(s.n&&s.r/s.total<0.7)weak.push(TITLES[k]+" ("+s.r+"/"+s.total+")");
+    items.forEach(function(it,i){
+      var ch=done[i];
+      details.push({part:TITLES[k],question:strip(it.q),answer:ch===undefined?"(chưa làm)":it.o[ch],correct:it.o[it.a],result:ch===undefined?"Chưa làm":(ch===it.a?"Đúng":"Sai")});
+    });
+  });
+  var f=store.fc||{stats:{},seen:[]};
+  cards.forEach(function(c,i){
+    var s=(f.stats||{})[i]||{r:0,w:0};
+    details.push({part:"Mục 3 · Thẻ từ nối",question:strip(c.w)+" – "+c.vi,answer:((f.seen||[]).indexOf(i)>-1?"đã lật":"chưa lật")+" · kiểm tra đúng "+s.r+" / sai "+s.w,correct:"",result:s.w>s.r?"Cần ôn":""});
+    if(s.w>s.r)weak.push("từ nối "+strip(c.w));
+  });
+  var st=storyStats();
+  details.push({part:"Mục 4 · Bài viết (kể lại câu chuyện)",question:"Write the story",answer:story.value,correct:"",result:st.sentences+" câu · "+st.words+" từ · từ nối: "+(st.conns.join(", ")||"không")});
+  var a=quizStats("1a"),b=quizStats("1b"),c1=quizStats("1c"),d=quizStats("1d"),q2=quizStats("2");
+  var fcs=0,fct=0;Object.keys(f.stats||{}).forEach(function(k){fcs+=f.stats[k].r;fct+=f.stats[k].r+f.stats[k].w});
+  return {type:"submit",name:store.name,lesson:LESSON,
+    summary:{
+      vocab:"1A "+a.r+"/"+a.total+" · 1B "+b.r+"/"+b.total+" · 1C "+c1.r+"/"+c1.total+" · 1D "+d.r+"/"+d.total,
+      gram:"Mục 2 (chọn thì): "+q2.r+"/"+q2.total+" đúng",
+      ctx:"Mục 3 (thẻ từ nối): lật "+((f.seen||[]).length)+"/"+cards.length+" thẻ · kiểm tra đúng "+fcs+"/"+fct,
+      rec:"Ghi âm: "+(store.sent.audio?"đã gửi file":"chưa gửi"),
+      para:"Bài viết: "+st.sentences+" câu · "+st.words+" từ · "+st.conns.length+" từ nối"+(store.sent.forced?" · CHƯA ĐỦ YÊU CẦU, em chọn vẫn nộp":""),
+      feedback:weak.length?"Cần ôn lại: "+weak.slice(0,12).join("; "):"Không có phần nào dưới 70%."},
+    details:details};
+}
+function setSubMsg(html,cls){var e=$("sub-msg");e.className=cls||"";e.innerHTML=html}
+function refreshSubStatus(){
+  var m=missing();
+  $("sub-status").textContent=m.length?("Còn thiếu: "+m.length+" mục (bấm nộp sẽ cho em xem chi tiết)"):"Em đã làm đủ các mục ✓";
+}
+document.addEventListener("click",function(){setTimeout(refreshSubStatus,50)});
+story.addEventListener("input",refreshSubStatus);
+refreshSubStatus();
+async function doSubmit(forced){
+  var btn=$("submit-btn");btn.disabled=true;btn.textContent="Đang gửi…";
+  store.sent.forced=!!forced;save();
+  var ok=await post(JSON.stringify(buildPayload()));
+  btn.disabled=false;btn.textContent="📨 Nộp bài cho cô";
+  if(ok){store.sent.submit=Date.now();save();setSubMsg("✅ Đã gửi bài cho cô! Em có thể nộp lại nếu sửa bài (cô sẽ thấy bản mới nhất).","ok-box")}
+  else setSubMsg("❌ Chưa gửi được (mạng hoặc trang này không cho gửi). Hãy kiểm tra mạng và bấm nộp lại. Nếu vẫn lỗi, em copy bài viết ở Mục 4 gửi cho cô.","bad-box");
+}
+$("submit-btn").onclick=function(){
+  var m=missing();
+  if(!store.name){setSubMsg("Em ghi tên ở đầu trang trước nhé.","bad-box");nameEl.scrollIntoView({behavior:"smooth",block:"center"});nameEl.focus();return}
+  if(!m.length){doSubmit(false);return}
+  var h="<b>Em còn thiếu:</b><ul>"+m.map(function(x){return "<li>"+x+"</li>"}).join("")+"</ul><button id=\"sub-back\" class=\"alt\">Quay lại làm tiếp</button><button id=\"sub-force\" class=\"ghost\">Vẫn nộp</button>";
+  setSubMsg(h,"warn");
+  $("sub-back").onclick=function(){setSubMsg("")};
+  $("sub-force").onclick=function(){setSubMsg("");doSubmit(true)};
+};
+
+/* gửi ghi âm */
+var audioBlob=null,audioExt="webm";
+async function sendAudio(blob,ext){
+  var msg=$("rec-sendmsg");
+  if(!store.name){msg.className="bad-box";msg.textContent="Em ghi tên ở đầu trang trước nhé.";return}
+  if(blob.size>12*1024*1024){msg.className="bad-box";msg.textContent="File quá lớn (hơn 12 MB). Hãy ghi ngắn hơn.";return}
+  msg.className="";msg.textContent="Đang gửi ghi âm…";
+  try{
+    var data=await b64(blob);
+    var ok=await post(JSON.stringify({type:"audio",name:store.name,lesson:LESSON,file:"PastSimple_L2_ghi_am."+ext,label:"Đọc bài viết · Past Simple L2",score:null,dur:"",target:story.value,transcript:"",mime:blob.type||"audio/webm",audio:data}));
+    if(ok){store.sent.audio=true;save();msg.className="ok-box";msg.textContent="✅ Đã gửi ghi âm cho cô.";refreshSubStatus()}
+    else{msg.className="bad-box";msg.textContent="❌ Chưa gửi được ghi âm. Kiểm tra mạng và bấm gửi lại."}
+  }catch(e){msg.className="bad-box";msg.textContent="❌ Không đọc được file ghi âm."}
+}
+if(store.sent.audio){$("rec-sendmsg").className="ok-box";$("rec-sendmsg").textContent="✅ Đã gửi ghi âm cho cô trước đó."}
+$("rec-file").onchange=function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  var ext=(f.name.split(".").pop()||"m4a").toLowerCase().replace(/[^a-z0-9]/g,"")||"m4a";
+  sendAudio(f,ext);
+};
+$("rec-send").onclick=function(){if(audioBlob)sendAudio(audioBlob,audioExt)};
+window.__setAudioBlob=function(b){
+  audioBlob=b;
+  var t=(b.type||"").toLowerCase();
+  audioExt=t.indexOf("mp4")>-1?"m4a":(t.indexOf("ogg")>-1?"ogg":"webm");
+  $("rec-send").style.display="inline-block";
+};
 })();
 </script>
 </body>
